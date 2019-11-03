@@ -1,7 +1,7 @@
 "use-strict";
 const Sequelize = require('sequelize');
 const log = require('./logger');
-const connection = new Sequelize('emm', 'ohnkyta', '33554432', {
+const connection = new Sequelize('unichat', 'OAO', '33554432', {
 	host: '47.102.140.37',
 	port: '3306',
 	dialect: 'mysql',

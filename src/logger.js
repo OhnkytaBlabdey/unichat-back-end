@@ -1,6 +1,6 @@
 "use-strict";
-const bunyan = require('bunyan')
-const process = require('process')
+const bunyan = require('bunyan');
+const process = require('process');
 const log = global.log = bunyan.createLogger({
 	name: "unichat-dbm",
 	streams: [{
@@ -13,5 +13,5 @@ const log = global.log = bunyan.createLogger({
 		period: '6h', // daily rotation : '1d'
 		count: 64 // keep copies
 	}]
-})
-module.exports = log
+});
+module.exports = log;

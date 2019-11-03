@@ -1,6 +1,6 @@
 "use-strict";
-const Sequelize = require('sequelize')
-const log = require('./logger')
+const Sequelize = require('sequelize');
+const log = require('./logger');
 const connection = new Sequelize('emm', 'ohnkyta', '33554432', {
 	host: '47.102.140.37',
 	port: '3306',
@@ -11,7 +11,7 @@ const connection = new Sequelize('emm', 'ohnkyta', '33554432', {
 		idle: 10000
 	},
 	logging:(sql)=>{
-		log.info(sql)
+		log.info(sql);
 	},
 	omitNull: true,
 	define: {
@@ -22,6 +22,6 @@ const connection = new Sequelize('emm', 'ohnkyta', '33554432', {
 		force: true
 	},
 	isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.REPEATABLE_READ
-})
+});
 
-module.exports = connection
+module.exports = connection;

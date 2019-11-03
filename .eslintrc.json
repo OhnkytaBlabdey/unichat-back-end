@@ -13,6 +13,7 @@
 		"ecmaVersion": 2018
 	},
 	"rules": {
-		"init-declarations":"warn"
+		"init-declarations": "warn",
+		"semi": "warn"
 	}
 }

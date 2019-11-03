@@ -1,12 +1,6 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"beautify.config": {
-			"brace_style": "collapse,preserve-inline"
-		}
-	}
+	"folders": [{
+		"path": "."
+	}],
+	"settings": {}
 }

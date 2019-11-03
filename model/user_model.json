@@ -38,11 +38,6 @@
 			"restrict": {}
 		},
 		{
-			"comment": "数据库维护的ID",
-			"name": "id",
-			"type": "INT"
-		},
-		{
 			"comment": "头像",
 			"name": "avatar",
 			"type": "STRING",
@@ -51,5 +46,5 @@
 			}
 		}
 	],
-	"primary": "id"
+	"name": "user"
 }

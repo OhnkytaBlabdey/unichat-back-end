@@ -1,0 +1,55 @@
+{
+	"rows": [{
+			"comment": "昵称 长度 2 - 10位",
+			"name": "nickname",
+			"type": "STRING",
+			"restrict": {
+				"min_lentgh": 2,
+				"max_length": 10
+			}
+		},
+		{
+			"comment": "密码：长度1- 20位，数字，大小写字母、可打印特殊字符、不允许中文",
+			"name": "password_hash",
+			"type": "STRING",
+			"restrict": {
+				"min_lentgh": 1,
+				"max_length": 20
+			}
+		},
+		{
+			"comment": "邮箱",
+			"name": "email_addr",
+			"type": "STRING",
+			"restrict": {}
+		},
+		{
+			"comment": "个人简介：最长50位",
+			"name": "profile",
+			"type": "STRING",
+			"restrict": {
+				"max_length": 50
+			}
+		},
+		{
+			"comment": "用户展示用的ID",
+			"name": "uid",
+			"type": "INT",
+			"restrict": {}
+		},
+		{
+			"comment": "数据库维护的ID",
+			"name": "id",
+			"type": "INT"
+		},
+		{
+			"comment": "头像",
+			"name": "avatar",
+			"type": "STRING",
+			"restrict": {
+				"property": "is an url"
+			}
+		}
+	],
+	"primary": "id"
+}

@@ -1,5 +1,5 @@
 "use-strict";
-const list = ['./user_model', './group_model'];
+const list = ['./user_model', './group_model', './message_model'];
 let models = [];
 for (const model of list) {
 	models.push(require(model))

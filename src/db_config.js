@@ -15,7 +15,7 @@ const connection = new Sequelize('unichat', 'OAO', '33554432', {
 	},
 	omitNull: true,
 	define: {
-		charset: 'utf8',
+		charset: 'utf8mb4',
 		timestamps: true
 	},
 	sycn: {

@@ -31,14 +31,17 @@ const define_model = (name) => {
 				allowNull: false
 			}
 		};
-		if (col.restrict.min_length)
+		if (!col.restrict) continue;
+		let flag = false;
+		if (col.restrict.min_length) {
 			model_config[name].validate["min"] = col.restrict.min_length;
-		else if (col.restrict.max_length)
+			flag = true;
+		}
+		if (col.restrict.max_length) {
 			model_config[name].validate["max"] = col.restrict.max_length;
-		// else if (JSON.stringify(col.restrict) == '{}')
-		// else if (col.restrict === {})
-			// console.log('no restriction');
-		else if(JSON.stringify(col.restrict) != '{}')
+			flag = true;
+		}
+		if (!flag && JSON.stringify(col.restrict) != '{}')
 			console.warn('[cannot recognize restriction]' + JSON.stringify(col.restrict));
 	}
 	console.log(model_config);
@@ -51,19 +54,5 @@ const define_model = (name) => {
 
 	return model;
 }
-// console.log(Sequelize.STRING);
-// example
-/* const User = sequelize.define('user', {
-	// attributes
-	firstName: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	lastName: {
-		type: Sequelize.STRING
-		// allowNull defaults to true
-	}
-}, {
-	// options
-}); */
+
 module.exports = define_model;

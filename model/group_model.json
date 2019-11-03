@@ -1,0 +1,30 @@
+{
+	"rows": [{
+			"name": "id",
+			"type": "INT",
+			"comment": "维护用ID"
+		},
+		{
+			"name": "name",
+			"type": "STRING",
+			"comment": "群名：2-20",
+			"restrict": {
+				"min_length": 2,
+				"max_length": 20
+			}
+		},
+		{
+			"comment": "群聊展示用的ID",
+			"name": "gid",
+			"type": "INT"
+		},
+		{
+			"comment": "群头像",
+			"name": "logo",
+			"type": "STRING",
+			"restrict": {
+				"property": "is a safe url"
+			}
+		}
+	]
+}

@@ -47,7 +47,7 @@
 			"name": "avatar",
 			"type": "STRING",
 			"restrict": {
-				"property": "is an url"
+				"property": "is a safe url"
 			}
 		}
 	],

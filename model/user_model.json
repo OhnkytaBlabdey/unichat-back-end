@@ -1,10 +1,10 @@
 {
-	"rows": [{
+	"cols": [{
 			"comment": "昵称 长度 2 - 10位",
 			"name": "nickname",
 			"type": "STRING",
 			"restrict": {
-				"min_lentgh": 2,
+				"min_length": 2,
 				"max_length": 10
 			}
 		},
@@ -13,7 +13,7 @@
 			"name": "password_hash",
 			"type": "STRING",
 			"restrict": {
-				"min_lentgh": 1,
+				"min_length": 1,
 				"max_length": 20
 			}
 		},

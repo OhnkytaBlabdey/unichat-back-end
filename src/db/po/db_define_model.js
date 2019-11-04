@@ -1,11 +1,11 @@
 "use-strict";
 
-const connection = require('./db_config');
+const connection = require('../db_config');
 const Sequelize = require('sequelize');
-const log = require('./logger');
+const log = require('../../logger');
 
 const define_model = (name) => {
-	const model_path = './model/' + name + '_model.json';
+	const model_path = 'src/db/model/' + name + '_model.json';
 	const fs = require('fs');
 	let config = null;
 	try {

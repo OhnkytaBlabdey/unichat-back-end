@@ -1,8 +1,8 @@
 "use-strict";
 const Sequelize = require('sequelize');
-const log = require('./logger');
+const log = require('../logger');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('./src/config.json'));
+const config = JSON.parse(fs.readFileSync('src/db/config.json'));
 const pw = Math.floor(Math.pow(config.a, config.b)) + config.c;
 
 const connection = new Sequelize('unichat', 'OAO', pw, {

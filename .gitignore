@@ -2,3 +2,5 @@
 /node_modules
 # [log file]
 /log
+# [config file]
+/src/config.json

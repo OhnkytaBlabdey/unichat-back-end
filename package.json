@@ -1,23 +1,24 @@
 {
-  "name": "db-2019-unichat",
-  "version": "1.0.0",
-  "description": "demo version for unichat database support.",
-  "main": "index.js",
-  "scripts": {
-    "test": "node test.js"
-  },
-  "keywords": [
-    "unichat",
-    "db"
-  ],
-  "author": "Ohnkyta",
-  "license": "MIT",
-  "dependencies": {
-    "bunyan": "^1.8.12",
-    "mysql2": "^2.0.0",
-    "sequelize": "^5.21.2"
-  },
-  "devDependencies": {
-    "eslint": "^6.6.0"
-  }
+	"name": "db-2019-unichat",
+	"version": "1.0.0",
+	"description": "demo version for unichat database support.",
+	"main": "index.js",
+	"scripts": {
+		"test": "node src/test.js",
+		"start": "node src/index.js"
+	},
+	"keywords": [
+		"unichat",
+		"db"
+	],
+	"author": "Ohnkyta",
+	"license": "MIT",
+	"dependencies": {
+		"bunyan": "^1.8.12",
+		"mysql2": "^2.0.0",
+		"sequelize": "^5.21.2"
+	},
+	"devDependencies": {
+		"eslint": "^6.6.0"
+	}
 }

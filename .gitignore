@@ -3,4 +3,4 @@
 # [log file]
 /log
 # [config file]
-/src/config.json
+src/db/config.json

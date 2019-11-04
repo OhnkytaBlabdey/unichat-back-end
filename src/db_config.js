@@ -1,7 +1,11 @@
 "use-strict";
 const Sequelize = require('sequelize');
 const log = require('./logger');
-const connection = new Sequelize('unichat', 'OAO', '33554432', {
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('./src/config.json'));
+const pw = Math.floor(Math.pow(config.a, config.b)) + config.c;
+
+const connection = new Sequelize('unichat', 'OAO', pw, {
 	host: '47.102.140.37',
 	port: '3306',
 	dialect: 'mysql',
@@ -10,7 +14,7 @@ const connection = new Sequelize('unichat', 'OAO', '33554432', {
 		max: 3,
 		idle: 10000
 	},
-	logging:(sql)=>{
+	logging: (sql) => {
 		log.info(sql);
 	},
 	omitNull: true,

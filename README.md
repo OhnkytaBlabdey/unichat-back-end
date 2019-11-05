@@ -60,6 +60,7 @@ database API for `unichat`
 
 ## TODO:
 
+-   后台返回 JSON 的约定
 -   调用接口的**认证**方式
     -   session id 保存在客户端的 cookie 里
 -   确定编码规范
@@ -67,6 +68,9 @@ database API for `unichat`
     -   字段：下划线命名
 -   确定接口包括哪些业务
     -   用户注册
+        -   验证码
+            SVG Captcha
+        -   用户显示 ID 的生成
     -   用户登录
     -   用户其他方式认证
     -   用户改属性

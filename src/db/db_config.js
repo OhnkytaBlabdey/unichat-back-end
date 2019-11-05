@@ -15,7 +15,7 @@ const connection = new Sequelize('unichat', 'OAO', pw, {
 		idle: 10000
 	},
 	logging: (sql) => {
-		log.info(sql);
+		log.warn(sql);
 	},
 	omitNull: true,
 	define: {

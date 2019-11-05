@@ -13,9 +13,9 @@ const server = https.createServer({
 	cert: fs.readFileSync('certificate.pem'),
 	ca: fs.readFileSync('certrequest.csr')
 }, (req, res) => {
-	log.info(`received request ${req.rawHeaders}`);
-	log.info(` from client ${JSON.stringify(req.headers)}.`);
-	log.info(`request url :${JSON.stringify(req.url)}`);
+	log.debug(`received request ${req.rawHeaders}`);
+	log.debug(` from client ${JSON.stringify(req.headers)}.`);
+	log.debug(`request url :${JSON.stringify(req.url)}`);
 	const parsed = url.parse(req.url, true);
 	log.info(`parsed :${JSON.stringify(parsed)}`);
 	// 去掉开头的'/'
@@ -39,6 +39,6 @@ const server = https.createServer({
 	res.end();
 	log.info('response ended.');
 });
-log.info('server created.');
+log.warn('server created.');
 server.listen(serverPort);
 module.exports = server;

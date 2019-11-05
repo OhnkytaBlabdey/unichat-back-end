@@ -12,6 +12,12 @@ const log = global.log = bunyan.createLogger({
 		path: './log/infos.log',
 		period: '6h', // daily rotation : '1d'
 		count: 64 // keep copies
+	}, {
+		level: 'debug',
+		type: 'rotating-file',
+		path: './log/debug.log',
+		period: '8h',
+		count: 64
 	}]
 });
 module.exports = log;

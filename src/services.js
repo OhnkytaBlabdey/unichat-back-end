@@ -21,7 +21,7 @@ const services = {
 			}
 		}).then((user) => {
 			if (user) {
-				log.info(`nickname [${nickname}] has been taken by user [${user}]`);
+				log.info(`nickname [${nickname}] has been taken by user [${JSON.stringify(user)}]`);
 				result['succeeded'] = false;
 			} else {
 				User.create({
@@ -32,7 +32,7 @@ const services = {
 					uid: 6,
 					avatar: '/'
 				}).then((user) => {
-					log.info(`${user} signed up successfully.`);
+					log.info(`user ${JSON.stringify(user)} signed up successfully.`);
 					result['succeeded'] = true;
 				});
 			}

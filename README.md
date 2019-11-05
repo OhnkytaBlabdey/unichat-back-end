@@ -5,32 +5,57 @@ database API for `unichat`
 ## 文件说明
 
 -   文件夹
+
     -   log
+
         运行过程中生成的日志文件
+
     -   src
+
         源代码
+
     -   .vscode
+
         vscode 有关项目的文件
+
 -   文件
+
     -   .editorconfig
+
         代码的缩进格式配置
+
     -   .eslintrc.json
+
         ESLint 语法检查的规则
+
     -   .gitignore
+
         版本控制工具忽略的文件
+
     -   certificate.pem
+
         SSL 认证
+
     -   certrequest.csr
+
         CA
+
     -   privatekey.pem
+
         SSL 密钥
+
     -   \*.code-workspace
+
         vscode 的工作空间
+
     -   LICENSE
     -   package-lock.json
     -   package.json
+
         Node.js 的项目配置
+
     -   README.md
+
         此说明文件
 
 ## TODO:
@@ -65,8 +90,18 @@ database API for `unichat`
 ## Usage
 
 -   npm start
+
     开启服务器
+
 -   npm test
+
     运行测试
+
 -   npm run apply
+
     把数据模型的字段更新到对应的表中，并**删除**之前的旧数据表
+
+## 相关链接
+
+-   [后台](https://github.com/OhnkytaBlabdey/unichat-back-end)
+-   [前台](https://github.com/NeWive/UniChatFrontEnd)

@@ -25,18 +25,18 @@ const define_model = (name) => {
 		const type = col.type;
 		model_config[name] = {
 			type: type_mapping[type],
+			allowNull: false,
 			validate: {
-				allowNull: false
+				notNull: true
 			}
 		};
 		if (!col.restrict) continue;
 		let flag = false;
-		if (col.restrict.min_length) {
-			model_config[name].validate['min'] = col.restrict.min_length;
-			flag = true;
-		}
-		if (col.restrict.max_length) {
-			model_config[name].validate['max'] = col.restrict.max_length;
+		if (col.restrict.min_length || col.restrict.max_length) {
+			model_config[name].validate['len'] = [
+				col.restrict.min_length || 1,
+				col.restrict.max_length || 255
+			];
 			flag = true;
 		}
 		if (!flag && JSON.stringify(col.restrict) != '{}')

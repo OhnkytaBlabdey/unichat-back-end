@@ -1,4 +1,4 @@
-"use-strict";
+'use-strict';
 const Sequelize = require('sequelize');
 const log = require('../logger');
 const fs = require('fs');

@@ -1,8 +1,8 @@
-"use-strict";
+'use-strict';
 const bunyan = require('bunyan');
 const process = require('process');
 const log = global.log = bunyan.createLogger({
-	name: "unichat-dbm",
+	name: 'unichat-dbm',
 	streams: [{
 		level: 'info',
 		stream: process.stdout // log INFO and above to stdout

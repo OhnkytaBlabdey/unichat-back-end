@@ -1,4 +1,4 @@
-"use-strict";
+'use-strict';
 
 const connection = require('../db_config');
 const Sequelize = require('sequelize');
@@ -17,8 +17,8 @@ const define_model = (name) => {
 	const json_config = JSON.parse(config);
 	let model_config = {};
 	const type_mapping = {
-		"INT": Sequelize.INTEGER,
-		"STRING": Sequelize.STRING
+		'INT': Sequelize.INTEGER,
+		'STRING': Sequelize.STRING
 	};
 	for (const col of json_config.cols) {
 		const name = col.name;
@@ -32,11 +32,11 @@ const define_model = (name) => {
 		if (!col.restrict) continue;
 		let flag = false;
 		if (col.restrict.min_length) {
-			model_config[name].validate["min"] = col.restrict.min_length;
+			model_config[name].validate['min'] = col.restrict.min_length;
 			flag = true;
 		}
 		if (col.restrict.max_length) {
-			model_config[name].validate["max"] = col.restrict.max_length;
+			model_config[name].validate['max'] = col.restrict.max_length;
 			flag = true;
 		}
 		if (!flag && JSON.stringify(col.restrict) != '{}')

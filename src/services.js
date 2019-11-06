@@ -1,16 +1,17 @@
 'use-strict';
 const log = require('./logger');
 const User = require('./db/po/user_model');
-// const Sequelize = require('sequelize');
+const url = require('url');
+
 
 const services = {
-	signup: (params) => {
+	signup: (req, res) => {
+		const params = url.parse(req.url).params;
 		log.info(`signup request ${JSON.stringify(params)}`);
 		let result = {};
 		const nickname = params.nickname;
 		const passwordHash = params.passwordHash;
 		const emailAddr = params.emailAddr;
-		
 
 		/* const profile = params.profile;
 		const avatar = null;
@@ -22,7 +23,9 @@ const services = {
 		}).then((user) => {
 			if (user) {
 				log.info(`nickname [${nickname}] has been taken by user [${JSON.stringify(user)}]`);
-				result['succeeded'] = false;
+				result['status'] = 'failed';
+				result['desc'] = `nickname [${nickname}] has been taken.`;
+				res.write(JSON.stringify(result));
 			} else {
 				User.create({
 					nickname: nickname,
@@ -33,11 +36,11 @@ const services = {
 					avatar: '/'
 				}).then((user) => {
 					log.info(`user ${JSON.stringify(user)} signed up successfully.`);
-					result['succeeded'] = true;
+					result['status'] = 'ok';
+					res.write(JSON.stringify(result));
 				});
 			}
 		});
-		return result;
 	}
 };
 

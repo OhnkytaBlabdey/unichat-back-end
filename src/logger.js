@@ -18,6 +18,12 @@ const log = global.log = bunyan.createLogger({
 		path: './log/debug.log',
 		period: '8h',
 		count: 64
+	}, {
+		level: 'warn',
+		type: 'rotating-file',
+		path: './log/warn.log',
+		period: '1d',
+		count: 64
 	}]
 });
 module.exports = log;

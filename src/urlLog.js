@@ -14,9 +14,9 @@ const commonLog = (req) => {
 	// 解析请求
 	const serv = {
 		servName: pathname,
-		params: query.params
+		params: query
 	};
-	log.info(`requested for service :${serv}`);
+	log.info(`requested for service :${JSON.stringify(serv)}`);
 	// // 返回解析的服务名称和参数
 	// return serv;
 };

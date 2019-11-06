@@ -5,10 +5,11 @@ const https = require('https');
 const log = require('./logger');
 const fs = require('fs');
 const urlLog = require('./urlLog');
+const router = require('./router');
 const serverPort = 7890;
 
 const app = express();
-const router = express.Router();
+
 app.use((req, res, next) => {
 		urlLog(req);
 		next();

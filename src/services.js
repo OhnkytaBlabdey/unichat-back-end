@@ -58,6 +58,24 @@ const services = {
 						log.info(`user ${JSON.stringify(user)} signed up successfully.`);
 						result['status'] = 'ok';
 						res.send(JSON.stringify(result));
+					}).catch((err) => {
+						if (err) {
+							log.error({
+								dberr: err
+							});
+						}
+						if (err.name === 'SequelizeValidationError') {
+							res.send({
+								status: 'failed',
+								desc: 'ValidationError',
+								error: err.errors
+							});
+						} else {
+							res.send({
+								status: 'failed',
+								desc: 'internal error.'
+							});
+						}
 					});
 				}
 			});

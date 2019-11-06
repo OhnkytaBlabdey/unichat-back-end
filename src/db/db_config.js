@@ -9,10 +9,13 @@ const connection = new Sequelize('unichat', 'OAO', pw, {
 	host: '47.102.140.37',
 	port: '3306',
 	dialect: 'mysql',
+	dialectOptions: {
+		// requestTimeout: 3
+	},
 	pool: {
 		min: 0,
 		max: 3,
-		idle: 10000
+		maxIdleTime: 10000
 	},
 	logging: (sql) => {
 		log.warn(sql);

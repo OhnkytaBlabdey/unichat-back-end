@@ -1,6 +1,6 @@
 # [Node.js]
 /node_modules
 # [log file]
-/log
+# /log
 # [config file]
 src/db/config.json

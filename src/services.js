@@ -231,19 +231,19 @@ const services = {
 					});
 					return;
 				}
+			})
+			.catch((err) => {
+				if (err) {
+					log.warn({
+						error: err
+					});
+					res.send({
+						status: Status.FAILED,
+						error: err
+					});
+					return;
+				}
 			});
-			// .catch((err) => {
-			// 	if (err) {
-			// 		log.warn({
-			// 			error: err
-			// 		});
-			// 		res.send({
-			// 			status: Status.FAILED,
-			// 			error: err
-			// 		});
-			// 		return;
-			// 	}
-			// });
 	}
 };
 

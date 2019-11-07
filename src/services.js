@@ -26,7 +26,7 @@ const services = {
 		const uid = 6;
 		const avatarUrl = '#';
 		const captcha = params.captcha;
-		if (captcha != req.session.captcha) {
+		if (!req.session.captcha || !captcha || captcha != req.session.captcha) {
 			log.debug('invalid request');
 			res.send({
 				status: Status.FAILED,

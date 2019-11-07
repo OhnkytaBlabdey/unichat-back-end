@@ -2,6 +2,7 @@
 
 const Status = {
 	OK: 'ok',
-	FAILED: 'failed'
+	FAILED: 'failed',
+	UNAUTHORIZED: 'unauthorized'
 };
 module.exports = Status;

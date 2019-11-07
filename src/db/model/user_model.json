@@ -13,8 +13,8 @@
 			"name": "password_hash",
 			"type": "STRING",
 			"restrict": {
-				"min_length": 1,
-				"max_length": 20
+				"min_length": 32,
+				"max_length": 64
 			}
 		},
 		{

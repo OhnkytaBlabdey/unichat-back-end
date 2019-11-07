@@ -9,8 +9,17 @@ const router = require('./router');
 const serverPort = 7890;
 
 const app = express();
+const session = require('express-session');
 
-app.use((req, res, next) => {
+app.use(session({
+		secret: 'keyboard cat',
+		resave: false,
+		saveUninitialized: true,
+		cookie: {
+			secure: true
+		}
+	}))
+	.use((req, res, next) => {
 		urlLog(req);
 		next();
 	})

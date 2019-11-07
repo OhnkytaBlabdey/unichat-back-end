@@ -7,13 +7,13 @@ const svgCaptcha = require('svg-captcha');
 
 const services = {
 	//====================================================================================================================================
-	//                                                                                                                                    
-	//  ##   ##   ####  #####  #####          #####    #####   ####    ##   ####  ######  #####  #####                                  
-	//  ##   ##  ##     ##     ##  ##         ##  ##   ##     ##       ##  ##       ##    ##     ##  ##                                 
-	//  ##   ##   ###   #####  #####          #####    #####  ##  ###  ##   ###     ##    #####  #####                                  
-	//  ##   ##     ##  ##     ##  ##         ##  ##   ##     ##   ##  ##     ##    ##    ##     ##  ##                                 
-	//   #####   ####   #####  ##   ##        ##   ##  #####   ####    ##  ####     ##    #####  ##   ##                                
-	//                                                                                                                                    
+	//
+	//  ##   ##   ####  #####  #####          #####    #####   ####    ##   ####  ######  #####  #####
+	//  ##   ##  ##     ##     ##  ##         ##  ##   ##     ##       ##  ##       ##    ##     ##  ##
+	//  ##   ##   ###   #####  #####          #####    #####  ##  ###  ##   ###     ##    #####  #####
+	//  ##   ##     ##  ##     ##  ##         ##  ##   ##     ##   ##  ##     ##    ##    ##     ##  ##
+	//   #####   ####   #####  ##   ##        ##   ##  #####   ####    ##  ####     ##    #####  ##   ##
+	//
 	//====================================================================================================================================
 	signup: (req, res) => {
 		const params = url.parse(req.url, true).query;
@@ -26,7 +26,11 @@ const services = {
 		const uid = 6;
 		const avatarUrl = '#';
 		const captcha = params.captcha;
-		if (!req.session.captcha || !captcha || captcha != req.session.captcha) {
+		if (
+			!req.session.captcha ||
+			!captcha ||
+			captcha != req.session.captcha
+		) {
 			log.debug('invalid request');
 			res.send({
 				status: Status.FAILED,
@@ -50,10 +54,11 @@ const services = {
 		const avatar = null;
 		const uid = null; */
 		User.findOne({
-				where: {
-					nickname: nickname
-				}
-			}).catch((err) => {
+			where: {
+				nickname: nickname
+			}
+		})
+			.catch(err => {
 				if (err) {
 					log.error({
 						dberr: err
@@ -65,9 +70,13 @@ const services = {
 					});
 				}
 			})
-			.then((user) => {
+			.then(user => {
 				if (user) {
-					log.info(`nickname [${nickname}] has been taken by user [${JSON.stringify(user)}]`);
+					log.info(
+						`nickname [${nickname}] has been taken by user [${JSON.stringify(
+							user
+						)}]`
+					);
 					result['status'] = Status.FAILED;
 					result['desc'] = `nickname [${nickname}] has been taken.`;
 					result['msg'] = `昵称[${nickname}]已被占用`;
@@ -80,44 +89,50 @@ const services = {
 						profile: profile,
 						uid: uid,
 						avatar: avatarUrl
-					}).then((user) => {
-						log.info(`user ${JSON.stringify(user)} signed up successfully.`);
-						result['status'] = Status.OK;
-						result['desc'] = user;
-						result['msg'] = '注册成功';
-						res.send(JSON.stringify(result));
-					}).catch((err) => {
-						if (err) {
-							log.error({
-								dberr: err
-							});
-						}
-						if (err.name === 'SequelizeValidationError') {
-							res.send({
-								status: Status.FAILED,
-								desc: 'ValidationError',
-								error: err.errors,
-								msg: '您的注册信息不符合要求'
-							});
-						} else {
-							res.send({
-								status: Status.FAILED,
-								desc: 'internal error.',
-								msg: '内部错误'
-							});
-						}
-					});
+					})
+						.then(user => {
+							log.info(
+								`user ${JSON.stringify(
+									user
+								)} signed up successfully.`
+							);
+							result['status'] = Status.OK;
+							result['desc'] = user;
+							result['msg'] = '注册成功';
+							res.send(JSON.stringify(result));
+						})
+						.catch(err => {
+							if (err) {
+								log.error({
+									dberr: err
+								});
+							}
+							if (err.name === 'SequelizeValidationError') {
+								res.send({
+									status: Status.FAILED,
+									desc: 'ValidationError',
+									error: err.errors,
+									msg: '您的注册信息不符合要求'
+								});
+							} else {
+								res.send({
+									status: Status.FAILED,
+									desc: 'internal error.',
+									msg: '内部错误'
+								});
+							}
+						});
 				}
 			});
 	},
 	//===========================================================================================
-	//                                                                                           
-	//   ####    ###    #####   ######   ####  ##   ##    ###                                  
-	//  ##      ## ##   ##  ##    ##    ##     ##   ##   ## ##                                 
-	//  ##     ##   ##  #####     ##    ##     #######  ##   ##                                
-	//  ##     #######  ##        ##    ##     ##   ##  #######                                
-	//   ####  ##   ##  ##        ##     ####  ##   ##  ##   ##                                
-	//                                                                                           
+	//
+	//   ####    ###    #####   ######   ####  ##   ##    ###
+	//  ##      ## ##   ##  ##    ##    ##     ##   ##   ## ##
+	//  ##     ##   ##  #####     ##    ##     #######  ##   ##
+	//  ##     #######  ##        ##    ##     ##   ##  #######
+	//   ####  ##   ##  ##        ##     ####  ##   ##  ##   ##
+	//
 	//===========================================================================================
 
 	captcha: (req, res) => {
@@ -131,7 +146,9 @@ const services = {
 		});
 		req.session.captcha = captcha.text;
 		log.debug(`captcha generated:[${captcha.text}]`);
-		res.type('svg').status(200).send(captcha.data);
+		res.type('svg')
+			.status(200)
+			.send(captcha.data);
 	}
 };
 

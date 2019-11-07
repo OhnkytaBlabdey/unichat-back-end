@@ -103,6 +103,10 @@ database API for `unichat`
 
 ## Usage
 
+### config database password before run
+
+create `src\db\config.json` and save the password of database in the file.
+
 -   npm start
 
     开启服务器

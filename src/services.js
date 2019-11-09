@@ -1,11 +1,14 @@
 'use-strict';
 const log = require('./logger');
 const User = require('./db/po/user_model');
-const url = require('url');
+const Group = require('./db/po/group_model');
+const getUid = require('./util/uidGen');
 const Status = require('./status');
+const url = require('url');
 const svgCaptcha = require('svg-captcha');
 const crypto = require('crypto');
 const Sequelize = require('sequelize');
+
 const Op = Sequelize.Op;
 
 const services = {
@@ -102,9 +105,7 @@ const services = {
 					}
 				})).then((maxid) => {
 					if (!maxid) return;
-					let buf = crypto.randomBytes(8);
-					const uid = maxid * (1 << 24) +
-						((parseInt(buf.toString('hex')) + Date.valueOf(new Date())) & 0xffffff);
+					const uid = getUid(maxid);
 					const hash = crypto.createHash('sha256');
 					hash.update(password);
 					const passwordHash = hash.digest('hex');
@@ -197,7 +198,17 @@ const services = {
 	//==================================================
 
 	signin: (req, res) => {
-		// 验证码限制?
+		// 验证码限制
+		const captcha = req.session.captcha;
+		if (!captcha) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'invalid captcha',
+				msg: '请输入正确的验证码'
+			});
+			return;
+		}
+		// 解析请求
 		const params = url.parse(req.url, true).query;
 		const nickname = params.nickname || null;
 		const emailAddr = params.emailAddr || null;
@@ -328,6 +339,74 @@ const services = {
 				});
 			});
 		}
+	},
+	//=========================================================================================================
+	//                                                                                                         
+	//   ####  #####    #####    ###    ######  #####             ####    #####     #####   ##   ##  #####   
+	//  ##     ##  ##   ##      ## ##     ##    ##               ##       ##  ##   ##   ##  ##   ##  ##  ##  
+	//  ##     #####    #####  ##   ##    ##    #####            ##  ###  #####    ##   ##  ##   ##  #####   
+	//  ##     ##  ##   ##     #######    ##    ##               ##   ##  ##  ##   ##   ##  ##   ##  ##      
+	//   ####  ##   ##  #####  ##   ##    ##    #####  ########   ####    ##   ##   #####    #####   ##      
+	//                                                                                                         
+	//=========================================================================================================
+	createGroup: (req, res) => {
+		if (!req.session.isvalid) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'unauthorized action',
+				msg: '未授权的请求'
+			});
+		}
+		const params = url.parse(req.url, true).query;
+		const name = params.name;
+		const logo = params.logo;
+		Group.max('id').catch((err) => {
+			if (err) {
+				log.warn(err);
+				res.send({
+					status: Status.FAILED,
+					desc: 'internal error',
+					msg: '服务器内部错误'
+				});
+			}
+		}).then((maxid) => {
+			const gid = getUid(maxid);
+			Group.create({
+				name: name,
+				logo: logo,
+				gid: gid
+			}).catch((err) => {
+				if (err) {
+					log.warn(err);
+				} else {
+					return;
+				}
+				if (err.name === 'SequelizeValidationError') {
+					res.send({
+						status: Status.FAILED,
+						desc: 'ValidationError',
+						error: err.errors,
+						msg: '群聊信息不符合要求'
+					});
+				} else {
+					res.send({
+						status: Status.FAILED,
+						desc: 'internal error.',
+						msg: '内部错误'
+					});
+				}
+			}).then((group) => {
+				res.send({
+					status: Status.OK,
+					desc: {
+						name: group.name,
+						gid: group.gid,
+						logo: group.logo
+					},
+					msg: '创建群聊成功'
+				});
+			});
+		});
 	}
 };
 

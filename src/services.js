@@ -258,6 +258,7 @@ const services = {
 	index: (req, res) => {
 		res.send({
 			status: status.OK,
+			desc: 'index',
 			msg: '这是UNICHAT的后台界面'
 		});
 	}

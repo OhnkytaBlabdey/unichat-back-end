@@ -101,6 +101,8 @@ database API for `unichat`
 
 -   数据对象持久化
 
+-   自动部署
+
 ## Usage
 
 ### config database password before run

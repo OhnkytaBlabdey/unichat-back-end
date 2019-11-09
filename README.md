@@ -34,7 +34,7 @@ database API for `unichat`
     备注
 
     -   用户的昵称和邮箱地址不能都为空
-    -   密码的 hash 算法使用 sha256
+    -   密码的 hash 算法使用 SHA256
 
 ## 文件说明
 
@@ -135,7 +135,7 @@ database API for `unichat`
 
 -   数据对象持久化
 
--   自动部署
+-   ~~自动部署~~
 
 ## Usage
 

@@ -12,11 +12,13 @@ const app = express();
 const session = require('express-session');
 
 app.use(session({
-		secret: 'keyboard cat',
+		secret: 'yingyingying',
 		resave: false,
 		saveUninitialized: true,
 		cookie: {
-			secure: true
+			secure: true,
+			// httpOnly: true,
+			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
 		}
 	}))
 	.use((req, res, next) => {

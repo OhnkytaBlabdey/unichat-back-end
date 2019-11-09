@@ -5,7 +5,6 @@ const url = require('url');
 const Status = require('./status');
 const svgCaptcha = require('svg-captcha');
 const crypto = require('crypto');
-const hash = crypto.createHash('sha256');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -34,7 +33,6 @@ const services = {
 		const password = params.password;
 		const emailAddr = params.emailAddr;
 		const profile = params.profile || 'this guy has no profile';
-		const uid = 6;
 		const avatarUrl = '#';
 		const captcha = params.captcha;
 		if (
@@ -95,47 +93,68 @@ const services = {
 					result['msg'] = `昵称[${nickname}]已被占用`;
 					res.send(JSON.stringify(result));
 				} else {
-					hash.update(password);
-					const passwordHash = hash.digest('hex');
-					User.create({
-							nickname: nickname,
-							password_hash: passwordHash,
-							email_addr: emailAddr,
-							profile: profile,
-							uid: uid,
-							avatar: avatarUrl
-						})
-						.then(user => {
-							log.info(
-								`user ${JSON.stringify(
+					User.max('id')
+						.catch((err => {
+							if (err) {
+								log.warn(err);
+								res.send({
+									status: Status.FAILED,
+									msg: 'internal error'
+								});
+								return;
+							}
+						}))
+						.then((maxid) => {
+							if (!maxid) return;
+							let buf = crypto.randomBytes(8);
+							const uid = maxid * (1 << 24) +
+								((parseInt(buf.toString('hex')) + Date.valueOf(new Date())) & 0xffffff);
+							const hash = crypto.createHash('sha256');
+							hash.update(password);
+							const passwordHash = hash.digest('hex');
+							User.create({
+									nickname: nickname,
+									password_hash: passwordHash,
+									email_addr: emailAddr,
+									profile: profile,
+									uid: uid,
+									avatar: avatarUrl
+								})
+								.then(user => {
+									log.info(
+										`user ${JSON.stringify(
 									user
 								)} signed up successfully.`
-							);
-							result['status'] = Status.OK;
-							result['desc'] = user;
-							result['msg'] = '注册成功';
-							res.send(JSON.stringify(result));
-						})
-						.catch((err) => {
-							if (err) {
-								log.error({
-									dberr: err
+									);
+									result['status'] = Status.OK;
+									result['desc'] = {
+										nickname: user.nickname,
+										uid: user.uid
+									};
+									result['msg'] = '注册成功';
+									res.send(JSON.stringify(result));
+								})
+								.catch((err) => {
+									if (err) {
+										log.error({
+											dberr: err
+										});
+									}
+									if (err.name === 'SequelizeValidationError') {
+										res.send({
+											status: Status.FAILED,
+											desc: 'ValidationError',
+											error: err.errors,
+											msg: '您的注册信息不符合要求'
+										});
+									} else {
+										res.send({
+											status: Status.FAILED,
+											desc: 'internal error.',
+											msg: '内部错误'
+										});
+									}
 								});
-							}
-							if (err.name === 'SequelizeValidationError') {
-								res.send({
-									status: Status.FAILED,
-									desc: 'ValidationError',
-									error: err.errors,
-									msg: '您的注册信息不符合要求'
-								});
-							} else {
-								res.send({
-									status: Status.FAILED,
-									desc: 'internal error.',
-									msg: '内部错误'
-								});
-							}
 						});
 				}
 			});

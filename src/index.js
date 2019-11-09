@@ -6,7 +6,7 @@ const log = require('./logger');
 const fs = require('fs');
 const urlLog = require('./urlLog');
 const router = require('./router');
-const serverPort = 7890;
+const serverPort = 10010;
 
 const app = express();
 const session = require('express-session');

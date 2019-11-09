@@ -123,8 +123,8 @@ const services = {
 								.then(user => {
 									log.info(
 										`user ${JSON.stringify(
-									user
-								)} signed up successfully.`
+								user
+							)} signed up successfully.`
 									);
 									result['status'] = Status.OK;
 									result['desc'] = {
@@ -139,6 +139,8 @@ const services = {
 										log.error({
 											dberr: err
 										});
+									} else {
+										return;
 									}
 									if (err.name === 'SequelizeValidationError') {
 										res.send({

@@ -2,6 +2,40 @@
 
 database API for `unichat`
 
+## 接口说明
+
+### 服务器主机 `https://47.102.140.37:10010/`
+
+-   用户注册 `GET POST`
+    PATH `/signup`
+    参数列表
+    -   昵称 `nickname`
+    -   密码 `password`
+    -   邮箱地址 `emailAddr`
+    -   签名档 `profile`
+        -   可以为空
+    -   验证码 `captcha`
+-   获取验证码 `GET`
+    PATH `/captcha`
+    参数列表
+
+    -   无
+
+    备注：验证码的文本存储在该请求的 session 中
+
+-   用户登录
+    PATH `/signin`
+    参数列表
+
+    -   昵称
+    -   邮箱地址
+    -   密码的 hash 值
+
+    备注
+
+    -   用户的昵称和邮箱地址不能都为空
+    -   密码的 hash 算法使用 sha256
+
 ## 文件说明
 
 -   文件夹

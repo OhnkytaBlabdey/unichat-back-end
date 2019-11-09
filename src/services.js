@@ -64,102 +64,96 @@ const services = {
 		const avatar = null;
 		const uid = null; */
 		User.findOne({
-				where: {
-					nickname: nickname
-				}
-			})
-			.catch((err) => {
-				if (err) {
-					log.error({
-						dberr: err
-					});
-					res.send({
-						status: Status.FAILED,
-						desc: `internal error${err.parent.code}`,
-						msg: '内部错误'
-					});
-					return;
-				}
-			})
-			.then((user) => {
-				if (user) {
-					log.info(
-						`nickname [${nickname}] has been taken by user [${JSON.stringify(
+			where: {
+				nickname: nickname
+			}
+		}).catch((err) => {
+			if (err) {
+				log.error({
+					dberr: err
+				});
+				res.send({
+					status: Status.FAILED,
+					desc: `internal error${err.parent.code}`,
+					msg: '内部错误'
+				});
+				return;
+			}
+		}).then((user) => {
+			if (user) {
+				log.info(
+					`nickname [${nickname}] has been taken by user [${JSON.stringify(
 							user
 						)}]`
-					);
-					result['status'] = Status.FAILED;
-					result['desc'] = `nickname [${nickname}] has been taken.`;
-					result['msg'] = `昵称[${nickname}]已被占用`;
-					res.send(JSON.stringify(result));
-				} else {
-					User.max('id')
-						.catch((err => {
-							if (err) {
-								log.warn(err);
-								res.send({
-									status: Status.FAILED,
-									msg: 'internal error'
-								});
-								return;
-							}
-						}))
-						.then((maxid) => {
-							if (!maxid) return;
-							let buf = crypto.randomBytes(8);
-							const uid = maxid * (1 << 24) +
-								((parseInt(buf.toString('hex')) + Date.valueOf(new Date())) & 0xffffff);
-							const hash = crypto.createHash('sha256');
-							hash.update(password);
-							const passwordHash = hash.digest('hex');
-							User.create({
-									nickname: nickname,
-									password_hash: passwordHash,
-									email_addr: emailAddr,
-									profile: profile,
-									uid: uid,
-									avatar: avatarUrl
-								})
-								.then(user => {
-									log.info(
-										`user ${JSON.stringify(
+				);
+				result['status'] = Status.FAILED;
+				result['desc'] = `nickname [${nickname}] has been taken.`;
+				result['msg'] = `昵称[${nickname}]已被占用`;
+				res.send(JSON.stringify(result));
+			} else {
+				User.max('id').catch((err => {
+					if (err) {
+						log.warn(err);
+						res.send({
+							status: Status.FAILED,
+							msg: 'internal error'
+						});
+						return;
+					}
+				})).then((maxid) => {
+					if (!maxid) return;
+					let buf = crypto.randomBytes(8);
+					const uid = maxid * (1 << 24) +
+						((parseInt(buf.toString('hex')) + Date.valueOf(new Date())) & 0xffffff);
+					const hash = crypto.createHash('sha256');
+					hash.update(password);
+					const passwordHash = hash.digest('hex');
+					User.create({
+						nickname: nickname,
+						password_hash: passwordHash,
+						email_addr: emailAddr,
+						profile: profile,
+						uid: uid,
+						avatar: avatarUrl
+					}).then(user => {
+						log.info(
+							`user ${JSON.stringify(
 								user
 							)} signed up successfully.`
-									);
-									result['status'] = Status.OK;
-									result['desc'] = {
-										nickname: user.nickname,
-										uid: user.uid
-									};
-									result['msg'] = '注册成功';
-									res.send(JSON.stringify(result));
-								})
-								.catch((err) => {
-									if (err) {
-										log.error({
-											dberr: err
-										});
-									} else {
-										return;
-									}
-									if (err.name === 'SequelizeValidationError') {
-										res.send({
-											status: Status.FAILED,
-											desc: 'ValidationError',
-											error: err.errors,
-											msg: '您的注册信息不符合要求'
-										});
-									} else {
-										res.send({
-											status: Status.FAILED,
-											desc: 'internal error.',
-											msg: '内部错误'
-										});
-									}
-								});
-						});
-				}
-			});
+						);
+						result['status'] = Status.OK;
+						result['desc'] = {
+							nickname: user.nickname,
+							uid: user.uid
+						};
+						result['msg'] = '注册成功';
+						res.send(JSON.stringify(result));
+					}).catch((err) => {
+						if (err) {
+							log.error({
+								dberr: err
+							});
+						} else {
+							return;
+						}
+						if (err.name === 'SequelizeValidationError') {
+							res.send({
+								status: Status.FAILED,
+								desc: 'ValidationError',
+								error: err.errors,
+								msg: '您的注册信息不符合要求'
+							});
+						} else {
+							res.send({
+								status: Status.FAILED,
+								desc: 'internal error.',
+								msg: '内部错误'
+							});
+						}
+					});
+				});
+			}
+		});
 	},
 	//===========================================================================================
 	//
@@ -223,48 +217,45 @@ const services = {
 
 		// 查询
 		User.findOne({
-				where: {
-					[Op.or]: [{
-							nickname: nickname
-						},
-						{
-							email_addr: emailAddr
-						}
-					],
-					password_hash: passwordHash
-				}
-			})
-
-			.then((user) => {
-				if (user) {
-					req.session.user = user;
-					req.session.isvalid = true;
-					res.send({
-						status: Status.OK,
-						msg: '登陆成功'
-					});
-					return;
-				} else {
-					res.send({
-						status: Status.FAILED,
-						disc: 'signin info incorrect',
-						msg: '密码错误'
-					});
-					return;
-				}
-			})
-			.catch((err) => {
-				if (err) {
-					log.warn({
-						error: err
-					});
-					res.send({
-						status: Status.FAILED,
-						error: err
-					});
-					return;
-				}
-			});
+			where: {
+				[Op.or]: [{
+						nickname: nickname
+					},
+					{
+						email_addr: emailAddr
+					}
+				],
+				password_hash: passwordHash
+			}
+		}).then((user) => {
+			if (user) {
+				req.session.user = user;
+				req.session.isvalid = true;
+				res.send({
+					status: Status.OK,
+					msg: '登陆成功'
+				});
+				return;
+			} else {
+				res.send({
+					status: Status.FAILED,
+					disc: 'signin info incorrect',
+					msg: '密码错误'
+				});
+				return;
+			}
+		}).catch((err) => {
+			if (err) {
+				log.warn({
+					error: err
+				});
+				res.send({
+					status: Status.FAILED,
+					error: err
+				});
+				return;
+			}
+		});
 	},
 	//============================================
 	//                                            
@@ -282,6 +273,61 @@ const services = {
 			desc: 'index',
 			msg: '这是UNICHAT的后台界面'
 		});
+	},
+	//======================================================
+	//                                                      
+	//  ###    ###   #####   ####    ##  #####  ##    ##  
+	//  ## #  # ##  ##   ##  ##  ##  ##  ##      ##  ##   
+	//  ##  ##  ##  ##   ##  ##  ##  ##  #####    ####    
+	//  ##      ##  ##   ##  ##  ##  ##  ##        ##     
+	//  ##      ##   #####   ####    ##  ##        ##     
+	//                                                      
+	//======================================================
+
+	modify: (req, res) => {
+		if (!req.session.isvalid || !req.session.user) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'you have not yet signed in',
+				msg: 'だが断る'
+			});
+		}
+		const params = url.parse(req.url, true).query;
+		const colName = params.colName;
+		const newVal = params.newVal;
+		// 只能修改 【昵称 邮箱地址 头像】
+		const availableCols = {
+			nickname: 'nickname',
+			emailAddr: 'email_addr',
+			avatar: 'avatar',
+			profile: 'profile'
+		};
+		let kv = {};
+		kv[availableCols[colName]] = newVal;
+		if (colName in availableCols) {
+			// req.session.user = 
+			User.update(kv, {
+				where: {
+					id: req.session.user.id
+				},
+				fields: [availableCols[colName]]
+			}).catch((err) => {
+				if (!err) return;
+				log.warn(err);
+				res.send({
+					status: Status.FAILED,
+					desc: err,
+					msg: 'internal error'
+				});
+			}).then((matched) => {
+				log.info(`matched user: ${matched}`);
+				res.send({
+					status: Status.OK,
+					msg: '修改成功',
+					desc: kv
+				});
+			});
+		}
 	}
 };
 

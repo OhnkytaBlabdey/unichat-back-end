@@ -2,14 +2,18 @@
 
 const express = require('express');
 const https = require('https');
-const log = require('./logger');
 const fs = require('fs');
+const session = require('express-session');
+
+const log = require('./logger');
 const urlLog = require('./urlLog');
 const router = require('./router');
+const Status = require('./status');
+
 const serverPort = 10010;
 
 const app = express();
-const session = require('express-session');
+
 
 app.use(session({
 		secret: 'yingyingying',
@@ -21,8 +25,29 @@ app.use(session({
 			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
 		}
 	}))
+	// 日志
 	.use((req, res, next) => {
 		urlLog(req);
+		next();
+	})
+	// 限制频率
+	.use((req, res, next) => {
+		if (req.session.isvalid) {
+			const frequency = 1000 / 8;
+			let lastAccess = new Date();
+			if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
+				req.session.lastAccess = lastAccess.getTime();
+				res.send({
+					status: Status.FAILED,
+					desc: 'you access too frequently',
+					msg: 'だが断る'
+				});
+				return;
+			} else if (req.session.lastAccess) {
+				log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.lastAccess}`);
+			}
+			req.session.lastAccess = lastAccess.getTime();
+		}
 		next();
 	})
 	.use('/', router);

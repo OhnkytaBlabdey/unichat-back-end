@@ -1,11 +1,14 @@
 'use-strict';
 const log = require('./logger');
 const User = require('./db/po/user_model');
-const url = require('url');
+const Group = require('./db/po/group_model');
+const getUid = require('./util/uidGen');
 const Status = require('./status');
+const url = require('url');
 const svgCaptcha = require('svg-captcha');
 const crypto = require('crypto');
 const Sequelize = require('sequelize');
+
 const Op = Sequelize.Op;
 
 const services = {
@@ -19,8 +22,9 @@ const services = {
 	//
 	//====================================================================================================================================
 	/**
-	 *
-	 *
+	 * 用户注册
+	 * 前提：用户输入正确的字段信息，符合约束，验证码正确
+	 * 结果：在库里添加用户记录，告诉用户注册成功，以及分配的uid
 	 * @param {*} req
 	 * @param {*} res
 	 * @returns
@@ -102,9 +106,7 @@ const services = {
 					}
 				})).then((maxid) => {
 					if (!maxid) return;
-					let buf = crypto.randomBytes(8);
-					const uid = maxid * (1 << 24) +
-						((parseInt(buf.toString('hex')) + Date.valueOf(new Date())) & 0xffffff);
+					const uid = getUid(maxid);
 					const hash = crypto.createHash('sha256');
 					hash.update(password);
 					const passwordHash = hash.digest('hex');
@@ -166,8 +168,9 @@ const services = {
 	//===========================================================================================
 
 	/**
-	 *
-	 *
+	 * 验证码服务
+	 * 前提：请求不可以过于频繁
+	 * 结果：在请求者的session里记录验证码的文本，把图像发送给请求者
 	 * @param {*} req
 	 * @param {*} res
 	 */
@@ -195,9 +198,27 @@ const services = {
 	//  ####   ##   ####    ##     ##  ##  ##     ##  
 	//                                                  
 	//==================================================
-
+	/**
+	 * 用户登录
+	 * 前提：用户在数据库内有注册记录
+	 * 前提：用户输入正确的用户名/邮箱地址、密码hash、验证码
+	 * 结果：在session中保存用户的登录信息
+	 * @param {*} req
+	 * @param {*} res
+	 * @returns
+	 */
 	signin: (req, res) => {
-		// 验证码限制?
+		// 验证码限制
+		const captcha = req.session.captcha;
+		if (!captcha) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'invalid captcha',
+				msg: '请输入正确的验证码'
+			});
+			return;
+		}
+		// 解析请求
 		const params = url.parse(req.url, true).query;
 		const nickname = params.nickname || null;
 		const emailAddr = params.emailAddr || null;
@@ -266,12 +287,17 @@ const services = {
 	//  ##  ##     ##  ####    #####  ##    ##  
 	//                                            
 	//============================================
-
+	/**
+	 * 根路径
+	 * 没啥用
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	index: (req, res) => {
 		res.send({
 			status: Status.OK,
-			desc: 'index',
-			msg: '这是UNICHAT的后台界面'
+			desc: 'hello',
+			msg: '这是UNICHAT的后台'
 		});
 	},
 	//======================================================
@@ -283,7 +309,14 @@ const services = {
 	//  ##      ##   #####   ####    ##  ##        ##     
 	//                                                      
 	//======================================================
-
+	/**
+	 * 用户修改自己的属性
+	 * 前提：用户已经登录
+	 * 前提：修改后的字段符合约束
+	 * 结果：修改该用户在库里的记录
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	modify: (req, res) => {
 		if (!req.session.isvalid || !req.session.user) {
 			res.send({
@@ -328,6 +361,82 @@ const services = {
 				});
 			});
 		}
+	},
+	//=========================================================================================================
+	//                                                                                                         
+	//   ####  #####    #####    ###    ######  #####             ####    #####     #####   ##   ##  #####   
+	//  ##     ##  ##   ##      ## ##     ##    ##               ##       ##  ##   ##   ##  ##   ##  ##  ##  
+	//  ##     #####    #####  ##   ##    ##    #####            ##  ###  #####    ##   ##  ##   ##  #####   
+	//  ##     ##  ##   ##     #######    ##    ##               ##   ##  ##  ##   ##   ##  ##   ##  ##      
+	//   ####  ##   ##  #####  ##   ##    ##    #####  ########   ####    ##   ##   #####    #####   ##      
+	//                                                                                                         
+	/**
+	 * 用户创建群聊
+	 * 前提：用户已经登录
+	 * 前提：群聊字段符合约束
+	 * 结果：创建群聊记录，创建用户和群聊从属关系的记录，告诉用户分配的gid
+	 * @param {*} req
+	 * @param {*} res
+	 */
+	createGroup: (req, res) => {
+		if (!req.session.isvalid) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'unauthorized action',
+				msg: '未授权的请求'
+			});
+		}
+		const params = url.parse(req.url, true).query;
+		const name = params.name;
+		const logo = params.logo;
+		Group.max('id').catch((err) => {
+			if (err) {
+				log.warn(err);
+				res.send({
+					status: Status.FAILED,
+					desc: 'internal error',
+					msg: '服务器内部错误'
+				});
+			}
+		}).then((maxid) => {
+			const gid = getUid(maxid);
+			Group.create({
+				name: name,
+				logo: logo,
+				gid: gid
+			}).catch((err) => {
+				if (err) {
+					log.warn(err);
+				} else {
+					return;
+				}
+				if (err.name === 'SequelizeValidationError') {
+					res.send({
+						status: Status.FAILED,
+						desc: 'ValidationError',
+						error: err.errors,
+						msg: '群聊信息不符合要求'
+					});
+				} else {
+					res.send({
+						status: Status.FAILED,
+						desc: 'internal error.',
+						msg: '内部错误'
+					});
+				}
+			}).then((group) => {
+				// TODO: 记录用户与群聊的关系
+				res.send({
+					status: Status.OK,
+					desc: {
+						name: group.name,
+						gid: group.gid,
+						logo: group.logo
+					},
+					msg: '创建群聊成功'
+				});
+			});
+		});
 	}
 };
 

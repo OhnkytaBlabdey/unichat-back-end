@@ -32,22 +32,26 @@ app.use(session({
 	})
 	// 限制频率
 	.use((req, res, next) => {
+		let frequency = 0;
 		if (req.session.isvalid) {
-			const frequency = 1000 / 8;
-			let lastAccess = new Date();
-			if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
-				req.session.lastAccess = lastAccess.getTime();
-				res.send({
-					status: Status.FAILED,
-					desc: 'you access too frequently',
-					msg: 'だが断る'
-				});
-				return;
-			} else if (req.session.lastAccess) {
-				log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.lastAccess}`);
-			}
-			req.session.lastAccess = lastAccess.getTime();
+			frequency = 1000 / 8;
+		} else {
+			frequency = 1000 * 2;
 		}
+
+		let lastAccess = new Date();
+		if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
+			req.session.lastAccess = lastAccess.getTime();
+			res.send({
+				status: Status.FAILED,
+				desc: 'you access this app too frequently',
+				msg: 'だが断る'
+			});
+			return;
+		} else if (req.session.lastAccess) {
+			log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.lastAccess}`);
+		}
+		req.session.lastAccess = lastAccess.getTime();
 		next();
 	})
 	.use('/', router);

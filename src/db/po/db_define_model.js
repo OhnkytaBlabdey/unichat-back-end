@@ -30,16 +30,18 @@ const define_model = (name) => {
 				notNull: true
 			}
 		};
+		let flag = false;
 		if (col.type === 'ENUM') {
 			model_config[name]['type'] = Sequelize.DataTypes.ENUM(
 				col.restrict.in
 			);
+			flag = true;
 		}
 		if (col.default) {
 			col.defaultValue = col.default;
 		}
 		if (!col.restrict) continue;
-		let flag = false;
+
 		if (col.restrict.min_length || col.restrict.max_length) {
 			model_config[name].validate['len'] = [
 				col.restrict.min_length || 1,

@@ -10,7 +10,7 @@ const urlLog = require('./urlLog');
 const router = require('./router');
 const Status = require('./status');
 
-const serverPort = 7890;
+const serverPort = 10010;
 
 const app = express();
 

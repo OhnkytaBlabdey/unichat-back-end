@@ -37,7 +37,6 @@ const define_model = (name) => {
 		}
 		if (col.default) {
 			col.defaultValue = col.default;
-			flag = true;
 		}
 		if (!col.restrict) continue;
 		let flag = false;

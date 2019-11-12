@@ -7,6 +7,17 @@
 			"min_length": 4,
 			"max_length": 20
 		}
+	}, {
+		"name": "strategy",
+		"type": "ENUM",
+		"comment": "频道的发言策略，统一定好。而非针对用户",
+		"restrict": {
+			"in": [
+				"admin_only",
+				"free_to_chat",
+				"bot_only"
+			]
+		}
 	}],
 	"name": "channel"
 }

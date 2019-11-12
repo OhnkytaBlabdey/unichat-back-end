@@ -18,7 +18,10 @@
 			"name": "logo",
 			"type": "STRING",
 			"restrict": {
-				"property": "is a safe url"
+				"is": ["^https://i.loli.net/*"],
+				"property": [
+					"isUrl"
+				]
 			}
 		}
 	],

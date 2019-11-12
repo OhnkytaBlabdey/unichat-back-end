@@ -1,0 +1,14 @@
+{
+	"cols": [{
+		"name": "group_id",
+		"type": "INT",
+		"comment": "群的ID",
+		"restrict": {}
+	}, {
+		"name": "user_id",
+		"type": "INT",
+		"comment": "用户的ID",
+		"restrict": {}
+	}],
+	"name": "user_in_group"
+}

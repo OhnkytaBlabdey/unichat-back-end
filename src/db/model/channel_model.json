@@ -1,0 +1,12 @@
+{
+	"cols": [{
+		"name": "name",
+		"type": "STRING",
+		"comment": "聊天频道的名字",
+		"restrict": {
+			"min_length": 4,
+			"max_length": 20
+		}
+	}],
+	"name": "channel"
+}

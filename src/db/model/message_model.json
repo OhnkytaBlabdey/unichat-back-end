@@ -19,6 +19,12 @@
 			"name": "to_id",
 			"type": "INT",
 			"restrict": {}
+		},
+		{
+			"name": "msg_channel_id",
+			"type": "INT",
+			"comment": "消息发送的频道",
+			"restrict": {}
 		}
 	],
 	"name": "message"

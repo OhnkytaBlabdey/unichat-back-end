@@ -21,12 +21,17 @@
 			"comment": "邮箱",
 			"name": "email_addr",
 			"type": "STRING",
-			"restrict": {}
+			"restrict": {
+				"property": [
+					"isEmail"
+				]
+			}
 		},
 		{
 			"comment": "个人简介：最长50位",
 			"name": "profile",
 			"type": "STRING",
+			"default": "你还记得你放过多少鸽子🕊吗",
 			"restrict": {
 				"max_length": 50
 			}
@@ -42,7 +47,10 @@
 			"name": "avatar",
 			"type": "STRING",
 			"restrict": {
-				"property": "is a safe url"
+				"is": ["^https://i.loli.net/*"],
+				"property": [
+					"isUrl"
+				]
 			}
 		}
 	],

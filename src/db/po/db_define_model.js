@@ -30,6 +30,15 @@ const define_model = (name) => {
 				notNull: true
 			}
 		};
+		if (col.type === 'ENUM') {
+			model_config[name]['type'] = Sequelize.DataTypes.ENUM(
+				col.restrict.in
+			);
+		}
+		if (col.default) {
+			col.defaultValue = col.default;
+			flag = true;
+		}
 		if (!col.restrict) continue;
 		let flag = false;
 		if (col.restrict.min_length || col.restrict.max_length) {
@@ -37,6 +46,16 @@ const define_model = (name) => {
 				col.restrict.min_length || 1,
 				col.restrict.max_length || 255
 			];
+			flag = true;
+		}
+		if (col.restrict.is) {
+			model_config[name].validate['is'] = col.restrict.is;
+			flag = true;
+		}
+		if (col.restrict.property) {
+			for (const prop of col.restrict.property) {
+				model_config[name].validate[prop] = true;
+			}
 			flag = true;
 		}
 		if (!flag && JSON.stringify(col.restrict) != '{}')

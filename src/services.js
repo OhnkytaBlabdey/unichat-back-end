@@ -37,7 +37,7 @@ const services = {
 		const password = params.password;
 		const emailAddr = params.emailAddr;
 		const profile = params.profile || 'this guy has no profile';
-		const avatarUrl = '#';
+		const avatarUrl = 'https://i.loli.net/';
 		const captcha = params.captcha;
 		if (
 			!req.session.captcha ||

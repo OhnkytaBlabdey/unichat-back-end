@@ -1,8 +1,10 @@
 'use-strict';
 const bunyan = require('bunyan');
 const process = require('process');
+process.env.TZ = 'UTC+8';
 const log = global.log = bunyan.createLogger({
 	name: 'unichat-dbm',
+	time: new Date().toString(),
 	streams: [{
 		level: 'info',
 		stream: process.stdout // log INFO and above to stdout

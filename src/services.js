@@ -2,6 +2,7 @@
 const log = require('./logger');
 const User = require('./db/po/user_model');
 const Group = require('./db/po/group_model');
+const UserInGroup = require('./db/po/user_in_group_model');
 const getUid = require('./util/uidGen');
 const Status = require('./status');
 const url = require('url');
@@ -426,14 +427,29 @@ const services = {
 				}
 			}).then((group) => {
 				// TODO: 记录用户与群聊的关系
-				res.send({
-					status: Status.OK,
-					desc: {
-						name: group.name,
-						gid: group.gid,
-						logo: group.logo
-					},
-					msg: '创建群聊成功'
+				UserInGroup.create({
+					group_id: group.id,
+					user_id: req.session.user.id,
+					role: 'owner'
+				}).catch((err) => {
+					if (err) {
+						log.warn(err);
+						res.send({
+							status: Status.FAILED,
+							desc: err
+						});
+					}
+				}).then((uig) => {
+					res.send({
+						status: Status.OK,
+						desc: {
+							name: group.name,
+							gid: group.gid,
+							logo: group.logo,
+							uig: uig
+						},
+						msg: '创建群聊成功'
+					});
 				});
 			});
 		});

@@ -9,6 +9,18 @@
 		"type": "INT",
 		"comment": "用户的ID",
 		"restrict": {}
+	}, {
+		"name": "role",
+		"type": "ENUM",
+		"comment": "用户在群里的角色",
+		"restrict": {
+			"in": [
+				"owner",
+				"admin",
+				"normal",
+				"banned"
+			]
+		}
 	}],
 	"name": "user_in_group"
 }

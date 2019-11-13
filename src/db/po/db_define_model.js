@@ -35,6 +35,7 @@ const define_model = (name) => {
 			model_config[name]['type'] = Sequelize.DataTypes.ENUM(
 				col.restrict.in
 			);
+			model_config[name].validate['in'] = col.restrict.in;
 			flag = true;
 		}
 		if (col.default) {

@@ -3,7 +3,7 @@ const log = require('./logger');
 const User = require('./db/po/user_model');
 const Group = require('./db/po/group_model');
 const UserInGroup = require('./db/po/user_in_group_model');
-const getUid = require('./util/uidGen');
+const getId = require('./util/uidGen');
 const Status = require('./status');
 const url = require('url');
 const svgCaptcha = require('svg-captcha');
@@ -96,7 +96,7 @@ const services = {
 				result['msg'] = `昵称[${nickname}]已被占用`;
 				res.send(JSON.stringify(result));
 			} else {
-				User.max('id').catch((err => {
+				User.max('id').catch((err) => {
 					if (err) {
 						log.warn(err);
 						res.send({
@@ -105,9 +105,9 @@ const services = {
 						});
 						return;
 					}
-				})).then((maxid) => {
+				}).then((maxid) => {
 					if (!maxid) return;
-					const uid = getUid(maxid);
+					const uid = getId(maxid);
 					const hash = crypto.createHash('sha256');
 					hash.update(password);
 					const passwordHash = hash.digest('hex');
@@ -400,7 +400,7 @@ const services = {
 				});
 			}
 		}).then((maxid) => {
-			const gid = getUid(maxid);
+			const gid = getId(maxid);
 			Group.create({
 				name: name,
 				logo: logo,

@@ -118,19 +118,6 @@ const services = {
 						profile: profile,
 						uid: uid,
 						avatar: avatarUrl
-					}).then(user => {
-						log.info(
-							`user ${JSON.stringify(
-								user
-							)} signed up successfully.`
-						);
-						result['status'] = Status.OK;
-						result['desc'] = {
-							nickname: user.nickname,
-							uid: user.uid
-						};
-						result['msg'] = '注册成功';
-						res.send(JSON.stringify(result));
 					}).catch((err) => {
 						if (err) {
 							log.error({
@@ -153,6 +140,19 @@ const services = {
 								msg: '内部错误'
 							});
 						}
+					}).then(user => {
+						log.info(
+							`user ${JSON.stringify(
+								user
+							)} signed up successfully.`
+						);
+						result['status'] = Status.OK;
+						result['desc'] = {
+							nickname: user.nickname,
+							uid: user.uid
+						};
+						result['msg'] = '注册成功';
+						res.send(JSON.stringify(result));
 					});
 				});
 			}
@@ -249,6 +249,17 @@ const services = {
 				],
 				password_hash: passwordHash
 			}
+		}).catch((err) => {
+			if (err) {
+				log.warn({
+					error: err
+				});
+				res.send({
+					status: Status.FAILED,
+					error: err
+				});
+				return;
+			}
 		}).then((user) => {
 			if (user) {
 				req.session.user = user;
@@ -263,17 +274,6 @@ const services = {
 					status: Status.FAILED,
 					disc: 'signin info incorrect',
 					msg: '密码错误'
-				});
-				return;
-			}
-		}).catch((err) => {
-			if (err) {
-				log.warn({
-					error: err
-				});
-				res.send({
-					status: Status.FAILED,
-					error: err
 				});
 				return;
 			}

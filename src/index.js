@@ -10,10 +10,8 @@ const urlLog = require('./urlLog');
 const router = require('./router');
 const Status = require('./status');
 
-const serverPort = 7890;
-
 const app = express();
-
+const serverPort = 10010;
 
 app.use(session({
 		secret: 'yingyingying',

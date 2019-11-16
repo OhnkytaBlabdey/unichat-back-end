@@ -106,7 +106,7 @@ const services = {
 						return;
 					}
 				}).then((maxid) => {
-					if (!maxid) return;
+					if (!maxid) maxid = 0;
 					const uid = getId(maxid);
 					const hash = crypto.createHash('sha256');
 					hash.update(password);
@@ -440,13 +440,13 @@ const services = {
 						});
 					}
 				}).then((uig) => {
+					log.info(uig);
 					res.send({
 						status: Status.OK,
 						desc: {
 							name: group.name,
 							gid: group.gid,
-							logo: group.logo,
-							uig: uig
+							logo: group.logo
 						},
 						msg: '创建群聊成功'
 					});

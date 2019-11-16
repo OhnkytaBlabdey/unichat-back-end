@@ -4,6 +4,8 @@ const express = require('express');
 const https = require('https');
 const fs = require('fs');
 const session = require('express-session');
+const path = require('path');
+const favicon = require('serve-favicon');
 
 const log = require('./logger');
 const urlLog = require('./urlLog');
@@ -23,6 +25,8 @@ app.use(session({
 			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
 		}
 	}))
+	// icon
+	.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 	// 日志
 	.use((req, res, next) => {
 		urlLog(req);

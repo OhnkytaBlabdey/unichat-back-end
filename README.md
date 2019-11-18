@@ -63,6 +63,19 @@ database API for `unichat`
         -   新头像的 URL `avatar`
     -   必须在期限内登录过的用户才可以使用这个接口
 
+-   用户创建群聊
+
+    PATH `/createGroup`
+
+    参数列表
+
+    -   群聊名称 `name`
+    -   群聊图标 `logo`
+
+    备注
+
+    -   必须登录过的用户才可以使用
+
 ## 文件说明
 
 -   文件夹

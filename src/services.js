@@ -106,7 +106,7 @@ const services = {
 						return;
 					}
 				}).then((maxid) => {
-					if (maxid == null) maxid = 0;
+					if (!maxid) maxid = 0;
 					const uid = getId(maxid);
 					const hash = crypto.createHash('sha256');
 					hash.update(password);
@@ -400,7 +400,7 @@ const services = {
 				});
 			}
 		}).then((maxid) => {
-			if (maxid == null) maxid = 0;
+			if (!maxid) maxid = 0;
 			const gid = getId(maxid);
 			Group.create({
 				name: name,

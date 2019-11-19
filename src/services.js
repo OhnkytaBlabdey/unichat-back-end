@@ -31,7 +31,7 @@ const services = {
 	 * @returns
 	 */
 	signup: (req, res) => {
-		const params = url.parse(req.url, true).query;
+		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
 		log.info(`signup request ${JSON.stringify(params)}`);
 		let result = {};
 		const nickname = params.nickname;
@@ -220,7 +220,7 @@ const services = {
 			return;
 		}
 		// 解析请求
-		const params = url.parse(req.url, true).query;
+		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
 		const nickname = params.nickname || null;
 		const emailAddr = params.emailAddr || null;
 		const passwordHash = params.passwordHash || null;
@@ -326,7 +326,7 @@ const services = {
 				msg: 'だが断る'
 			});
 		}
-		const params = url.parse(req.url, true).query;
+		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
 		const colName = params.colName;
 		const newVal = params.newVal;
 		// 只能修改 【昵称 邮箱地址 头像】
@@ -387,7 +387,7 @@ const services = {
 				msg: '未授权的请求'
 			});
 		}
-		const params = url.parse(req.url, true).query;
+		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
 		const name = params.name;
 		const logo = params.logo;
 		Group.max('id').catch((err) => {

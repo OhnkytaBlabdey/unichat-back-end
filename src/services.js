@@ -210,8 +210,7 @@ const services = {
 	 */
 	signin: (req, res) => {
 		// 验证码限制
-		const captcha = req.session.captcha;
-		if (!captcha) {
+		if (!req.session.captcha) {
 			res.send({
 				status: Status.UNAUTHORIZED,
 				desc: 'invalid captcha',
@@ -224,6 +223,17 @@ const services = {
 		const nickname = params.nickname || null;
 		const emailAddr = params.emailAddr || null;
 		const passwordHash = params.passwordHash || null;
+		const captcha = params.captcha || null;
+		if (captcha != req.session.captcha) {
+			res.send({
+				status: Status.UNAUTHORIZED,
+				desc: 'wrong captcha',
+				msg: '验证码错误'
+			});
+			req.session.captcha = null;
+			return;
+		}
+		req.session.captcha = null;
 		if (
 			!passwordHash ||
 			!(emailAddr || nickname)
@@ -246,8 +256,8 @@ const services = {
 					{
 						email_addr: emailAddr
 					}
-				],
-				password_hash: passwordHash
+				]
+				// password_hash: passwordHash
 			}
 		}).catch((err) => {
 			if (err) {
@@ -262,6 +272,17 @@ const services = {
 			}
 		}).then((user) => {
 			if (user) {
+				const hash1 = crypto.createHash('sha256').digest((user.password_hash + captcha));
+				const hash2 = crypto.createHash('sha256').digest(passwordHash + captcha);
+				const isvalid = hash1 === hash2;
+				if (!isvalid) {
+					res.send({
+						status: Status.FAILED,
+						desc: 'login failed',
+						msg: '登录失败'
+					});
+					return;
+				}
 				req.session.user = user;
 				req.session.isvalid = true;
 				res.send({
@@ -272,8 +293,8 @@ const services = {
 			} else {
 				res.send({
 					status: Status.FAILED,
-					disc: 'signin info incorrect',
-					msg: '密码错误'
+					disc: 'signin failed',
+					msg: '登录失败'
 				});
 				return;
 			}

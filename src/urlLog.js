@@ -17,6 +17,8 @@ const commonLog = (req) => {
 		params: query
 	};
 	log.info(`requested for service :${JSON.stringify(serv)}`);
+	log.info('request body', req.body);
+	log.info('request session', req.session);
 	// // 返回解析的服务名称和参数
 	// return serv;
 };

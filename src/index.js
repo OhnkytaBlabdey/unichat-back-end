@@ -17,8 +17,9 @@ const serverPort = 7890;
 
 const app = express();
 
-
-app.use(session({
+app
+	// session
+	.use(session({
 		secret: 'yingyingying',
 		resave: false,
 		saveUninitialized: true,
@@ -30,6 +31,11 @@ app.use(session({
 	}))
 	// icon
 	.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+	// 解析请求体
+	.use(bodyParser.json()) // for parsing application/json
+	.use(bodyParser.urlencoded({
+		extended: false
+	})) // for parsing application/x-www-form-urlencoded
 	// 日志
 	.use((req, res, next) => {
 		urlLog(req);
@@ -59,11 +65,6 @@ app.use(session({
 		req.session.lastAccess = lastAccess.getTime();
 		next();
 	})
-	// 解析请求体
-	.use(bodyParser.json()) // for parsing application/json
-	.use(bodyParser.urlencoded({
-		extended: true
-	})) // for parsing application/x-www-form-urlencoded
 	// 路由表
 	.use('/', router);
 const server = https.createServer({

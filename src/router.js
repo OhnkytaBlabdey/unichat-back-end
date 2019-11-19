@@ -4,7 +4,9 @@ const express = require('express');
 const services = require('./services');
 const Router = express.Router();
 
-Router.get('/', services.index)
+
+Router
+	.get('/', services.index)
 	.post('/', services.index)
 	//====================================
 	//                                    
@@ -41,7 +43,7 @@ Router.get('/', services.index)
 	//   ####  ##   ##  ##        ##     ####  ##   ##  ##   ##  
 	//                                                             
 	//=============================================================
-	// .post('/captcha', services.captcha)
+	.post('/captcha', services.captcha)
 	.get('/captcha', services.captcha);
 
 module.exports = Router;

@@ -31,7 +31,8 @@ const services = {
 	 * @returns
 	 */
 	signup: (req, res) => {
-		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
+		const params = url.parse(req.url, true).query || req.body;
+		// const params = req.body;
 		log.info(`signup request ${JSON.stringify(params)}`);
 		let result = {};
 		const nickname = params.nickname;
@@ -45,7 +46,9 @@ const services = {
 			!captcha ||
 			captcha != req.session.captcha
 		) {
-			log.debug('invalid request');
+			log.debug('invalid request for signup');
+			log.debug(`captcha:${captcha}`);
+			log.debug(`session.captcha:${req.session.captcha}`);
 			res.send({
 				status: Status.UNAUTHORIZED,
 				desc: 'invalid captcha',
@@ -184,7 +187,11 @@ const services = {
 			mathMin: -16,
 			mathOperator: '+/-'
 		});
+		if (!req.session) {
+			log.warn('session not created');
+		}
 		req.session.captcha = captcha.text;
+		log.debug(req.session);
 		log.debug(`captcha generated:[${captcha.text}]`);
 		res.type('svg')
 			.status(200)
@@ -219,12 +226,13 @@ const services = {
 			return;
 		}
 		// 解析请求
-		const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
+		const params = url.parse(req.url, true).query || req.body;
 		const nickname = params.nickname || null;
 		const emailAddr = params.emailAddr || null;
 		const passwordHash = params.passwordHash || null;
 		const captcha = params.captcha || null;
 		if (captcha != req.session.captcha) {
+			log.debug(`wrong captcha${captcha}`);
 			res.send({
 				status: Status.UNAUTHORIZED,
 				desc: 'wrong captcha',

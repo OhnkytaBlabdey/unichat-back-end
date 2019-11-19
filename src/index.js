@@ -6,6 +6,7 @@ const fs = require('fs');
 const session = require('express-session');
 const path = require('path');
 const favicon = require('serve-favicon');
+const bodyParser = require('body-parser');
 
 const log = require('./logger');
 const urlLog = require('./urlLog');
@@ -56,6 +57,12 @@ app.use(session({
 		req.session.lastAccess = lastAccess.getTime();
 		next();
 	})
+	// 解析请求体
+	.use(bodyParser.json()) // for parsing application/json
+	.use(bodyParser.urlencoded({
+		extended: true
+	})) // for parsing application/x-www-form-urlencoded
+	// 路由表
 	.use('/', router);
 const server = https.createServer({
 		key: fs.readFileSync('privatekey.pem'),

@@ -38,6 +38,7 @@ database API for `unichat`
     -   昵称 `nickname`
     -   邮箱地址 `emailAddr`
     -   密码的 hash 值 `passwordHash`
+    -   验证码 `captcha`
 
     备注
 

@@ -1,11 +1,13 @@
 'use-strict';
 
 const url = require('url');
+const crypto = require('crypto');
 
 const log = require('../logger');
 const Status = require('../status');
 const User = require('../db/po/user_model');
 const getId = require('../util/uidGen');
+
 //====================================================================================================================================
 //
 //  ##   ##   ####  #####  #####          #####    #####   ####    ##   ####  ######  #####  #####

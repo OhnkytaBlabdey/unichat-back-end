@@ -14,8 +14,17 @@
 		"ecmaVersion": 2018
 	},
 	"rules": {
+		"no-use-before-define": "error",
 		"init-declarations": "warn",
 		"semi": "warn",
-		"quotes": ["warn", "single"]
+		"quotes": ["warn", "single"],
+		"sort-imports": "warn",
+		"sort-keys": "warn",
+		"no-multi-spaces": "warn",
+		"comma-dangle": "warn",
+		"no-whitespace-before-property": "warn",
+		"object-property-newline": "warn",
+		"no-multiple-empty-lines": "warn",
+		"padded-blocks": ["warn", "never"]
 	}
 }

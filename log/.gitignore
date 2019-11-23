@@ -1,2 +1,6 @@
-# [all log files]
+# [all other files]
 /[^\.]*
+# [log directory]
+!/warn
+!/info
+!/debug

@@ -1,6 +1,8 @@
 'use-strict';
-const log = require('./logger');
+
 const url = require('url');
+
+const log = require('../logger');
 
 const commonLog = (req) => {
 	log.debug(`received request ${req.rawHeaders}`);

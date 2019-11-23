@@ -1,7 +1,6 @@
 'use-strict';
 
 const url = require('url');
-const svgCaptcha = require('svg-captcha');
 const crypto = require('crypto');
 const Sequelize = require('sequelize');
 
@@ -15,46 +14,11 @@ const getId = require('./util/uidGen');
 const Status = require('./status');
 
 const signUp = require('./service/signUp');
-
+const captcha = require('./service/captcha');
 
 const services = {
 	signup: signUp,
-	//===========================================================================================
-	//
-	//   ####    ###    #####   ######   ####  ##   ##    ###
-	//  ##      ## ##   ##  ##    ##    ##     ##   ##   ## ##
-	//  ##     ##   ##  #####     ##    ##     #######  ##   ##
-	//  ##     #######  ##        ##    ##     ##   ##  #######
-	//   ####  ##   ##  ##        ##     ####  ##   ##  ##   ##
-	//
-	//===========================================================================================
-
-	/**
-	 * 验证码服务
-	 * 前提：请求不可以过于频繁
-	 * 结果：在请求者的session里记录验证码的文本，把图像发送给请求者
-	 * @param {*} req
-	 * @param {*} res
-	 */
-	captcha: (req, res) => {
-		const captcha = svgCaptcha.createMathExpr({
-			size: 6,
-			color: true,
-			noise: 4,
-			mathMax: 101,
-			mathMin: -16,
-			mathOperator: '+/-'
-		});
-		if (!req.session) {
-			log.warn('session not created');
-		}
-		req.session.captcha = captcha.text;
-		log.debug(req.session);
-		log.debug(`captcha generated:[${captcha.text}]`);
-		res.type('svg')
-			.status(200)
-			.send(captcha.data);
-	},
+	captcha: captcha,
 	//==================================================
 	//                                                  
 	//   ####  ##   ####    ##     ##  ##  ##     ##  

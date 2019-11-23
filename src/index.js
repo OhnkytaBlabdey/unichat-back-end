@@ -1,6 +1,7 @@
 'use-strict';
 
 const express = require('express');
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const session = require('express-session');
@@ -9,9 +10,9 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 
 const log = require('./logger');
-const urlLog = require('./urlLog');
+const urlLog = require('./util/urlLog');
 const router = require('./router');
-const Status = require('./status');
+const Limit = require('./util/frequecyLimit');
 
 const serverPort = 7890;
 
@@ -42,38 +43,27 @@ app
 		next();
 	})
 	// 限制频率
-	.use((req, res, next) => {
-		let frequency = 0;
-		if (req.session.isvalid) {
-			frequency = 1000 / 8;
-		} else {
-			frequency = 1000 * 2;
-		}
-
-		let lastAccess = new Date();
-		if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
-			req.session.lastAccess = lastAccess.getTime();
-			res.send({
-				status: Status.FAILED,
-				desc: 'you access this app too frequently',
-				msg: 'だが断る'
-			});
-			return;
-		} else if (req.session.lastAccess) {
-			log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.lastAccess}`);
-		}
-		req.session.lastAccess = lastAccess.getTime();
-		next();
-	})
+	.use(Limit)
 	// 路由表
 	.use('/', router);
-const server = https.createServer({
-		key: fs.readFileSync('privatekey.pem'),
-		cert: fs.readFileSync('certificate.pem'),
-		ca: fs.readFileSync('certrequest.csr')
-	}, // 证书
-	app
-);
-log.warn('server created.');
-server.listen(serverPort);
+// const server = http.createServer(
+const useHttps = false;
+let server = undefined;
+if (useHttps) {
+	server = https.createServer({
+			key: fs.readFileSync('privatekey.pem'),
+			cert: fs.readFileSync('certificate.pem'),
+			ca: fs.readFileSync('certrequest.csr')
+		}, // 证书
+		app
+	);
+	log.warn('server created.');
+	server.listen(serverPort);
+} else {
+	server = http.createServer(
+		app
+	);
+	log.warn('server created.');
+	server.listen(serverPort);
+}
 module.exports = server;

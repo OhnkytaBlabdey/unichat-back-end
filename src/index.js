@@ -22,10 +22,10 @@ app
 	// session
 	.use(session({
 		secret: 'yingyingying',
-		resave: false,
-		saveUninitialized: true,
+		resave: true,
+		saveUninitialized: false,
 		cookie: {
-			secure: true,
+			// secure: true,
 			// httpOnly: true,
 			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
 		}
@@ -57,13 +57,13 @@ if (useHttps) {
 		}, // 证书
 		app
 	);
-	log.warn('server created.');
+	log.warn('https server created.');
 	server.listen(serverPort);
 } else {
 	server = http.createServer(
 		app
 	);
-	log.warn('server created.');
+	log.warn('http server created.');
 	server.listen(serverPort);
 }
 module.exports = server;

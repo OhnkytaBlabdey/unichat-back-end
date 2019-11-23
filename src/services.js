@@ -7,6 +7,7 @@ const CreateGroup = require('./service/createGroup');
 const SignIn = require('./service/signIn');
 const Index = require('./service/index');
 const Modify = require('./service/modify');
+
 const services = {
 	captcha: captcha,
 	createGroup: CreateGroup,

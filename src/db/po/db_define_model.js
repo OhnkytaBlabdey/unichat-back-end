@@ -24,8 +24,8 @@ const define_model = (name) => {
 		const name = col.name;
 		const type = col.type;
 		model_config[name] = {
-			type: type_mapping[type],
 			allowNull: false,
+			type: type_mapping[type],
 			validate: {
 				notNull: true
 			}
@@ -39,7 +39,10 @@ const define_model = (name) => {
 			flag = true;
 		}
 		if (col.default) {
-			col.defaultValue = col.default;
+			model_config[name].defaultValue = col.default;
+		}
+		if (col.unique) {
+			model_config[name].unique = col.unique;
 		}
 		if (!col.restrict) continue;
 

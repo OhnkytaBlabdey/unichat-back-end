@@ -1,6 +1,7 @@
 'use-strict';
 
 const url = require('url');
+const stringRandom = require('string-random');
 
 const log = require('../logger');
 const Status = require('../status');
@@ -30,6 +31,7 @@ const CreateGroup = (req, res) => {
 			msg: '未授权的请求',
 			status: Status.UNAUTHORIZED
 		});
+		return;
 	}
 	const params = url.parse(req.url, true).query || req.body;
 	const name = params.name;
@@ -49,6 +51,7 @@ const CreateGroup = (req, res) => {
 		const gid = getId(maxid);
 		Group.create({
 			gid: gid,
+			invite_code: stringRandom(6),
 			logo: logo,
 			name: name
 		}).catch((err) => {
@@ -73,9 +76,9 @@ const CreateGroup = (req, res) => {
 		}).then((group) => {
 			// TODO: 记录用户与群聊的关系
 			UserInGroup.create({
-				group_id: group.id,
+				group_id: group.gid,
 				role: 'owner',
-				user_id: req.session.user.id
+				user_id: req.session.user.uid
 			}).catch((err) => {
 				if (err) {
 					log.warn(err);

@@ -34,6 +34,8 @@ Router
 	//================================================
 	.get('/createGroup', services.createGroup)
 	.post('/createGroup', services.createGroup)
+	.get('/getInviteCode', services.getInviteCode)
+	.post('/getInviteCode', services.getInviteCode)
 	//=============================================================
 	//                                                             
 	//   ####    ###    #####   ######   ####  ##   ##    ###    

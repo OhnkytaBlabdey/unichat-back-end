@@ -21,14 +21,14 @@ const app = express();
 app
 	// session
 	.use(session({
-		secret: 'yingyingying',
-		resave: true,
-		saveUninitialized: false,
 		cookie: {
 			// secure: true,
 			// httpOnly: true,
 			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
-		}
+		},
+		resave: true,
+		saveUninitialized: false,
+		secret: 'yingyingying'
 	}))
 	// icon
 	.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
@@ -51,9 +51,9 @@ const useHttps = false;
 let server = undefined;
 if (useHttps) {
 	server = https.createServer({
-			key: fs.readFileSync('privatekey.pem'),
+			ca: fs.readFileSync('certrequest.csr'),
 			cert: fs.readFileSync('certificate.pem'),
-			ca: fs.readFileSync('certrequest.csr')
+			key: fs.readFileSync('privatekey.pem')
 		}, // 证书
 		app
 	);

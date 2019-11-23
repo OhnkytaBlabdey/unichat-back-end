@@ -26,9 +26,9 @@ const UserInGroup = require('../db/po/user_in_group_model');
 const CreateGroup = (req, res) => {
 	if (!req.session.isvalid) {
 		res.send({
-			status: Status.UNAUTHORIZED,
 			desc: 'unauthorized action',
-			msg: '未授权的请求'
+			msg: '未授权的请求',
+			status: Status.UNAUTHORIZED
 		});
 	}
 	const params = url.parse(req.url, true).query || req.body;
@@ -38,9 +38,9 @@ const CreateGroup = (req, res) => {
 		if (err) {
 			log.warn(err);
 			res.send({
-				status: Status.FAILED,
 				desc: 'internal error',
-				msg: '服务器内部错误'
+				msg: '服务器内部错误',
+				status: Status.FAILED
 			});
 			return;
 		}
@@ -48,24 +48,24 @@ const CreateGroup = (req, res) => {
 		if (!maxid) maxid = 0;
 		const gid = getId(maxid);
 		Group.create({
-			name: name,
+			gid: gid,
 			logo: logo,
-			gid: gid
+			name: name
 		}).catch((err) => {
 			if (err) {
 				log.warn(err);
 				if (err.name === 'SequelizeValidationError') {
 					res.send({
-						status: Status.FAILED,
 						desc: 'ValidationError',
 						error: err.errors,
-						msg: '群聊信息不符合要求'
+						msg: '群聊信息不符合要求',
+						status: Status.FAILED
 					});
 				} else {
 					res.send({
-						status: Status.FAILED,
 						desc: 'internal error.',
-						msg: '内部错误'
+						msg: '内部错误',
+						status: Status.FAILED
 					});
 				}
 				return;
@@ -74,26 +74,26 @@ const CreateGroup = (req, res) => {
 			// TODO: 记录用户与群聊的关系
 			UserInGroup.create({
 				group_id: group.id,
-				user_id: req.session.user.id,
-				role: 'owner'
+				role: 'owner',
+				user_id: req.session.user.id
 			}).catch((err) => {
 				if (err) {
 					log.warn(err);
 					res.send({
-						status: Status.FAILED,
-						desc: err
+						desc: err,
+						status: Status.FAILED
 					});
 				}
 			}).then((uig) => {
 				log.info(uig);
 				res.send({
-					status: Status.OK,
 					desc: {
-						name: group.name,
 						gid: group.gid,
-						logo: group.logo
+						logo: group.logo,
+						name: group.name
 					},
-					msg: '创建群聊成功'
+					msg: '创建群聊成功',
+					status: Status.OK
 				});
 			});
 		});

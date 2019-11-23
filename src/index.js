@@ -45,7 +45,7 @@ app.use(session({
 	// 路由表
 	.use('/', router);
 // const server = http.createServer(
-const useHttps = false;
+const useHttps = true;
 let server = undefined;
 if (useHttps) {
 	server = https.createServer({

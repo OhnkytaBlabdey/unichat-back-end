@@ -40,6 +40,7 @@
 			"comment": "用户展示用的ID",
 			"name": "uid",
 			"type": "INT",
+			"unique": true,
 			"restrict": {}
 		},
 		{

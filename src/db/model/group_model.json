@@ -11,7 +11,8 @@
 		{
 			"comment": "群聊展示用的ID",
 			"name": "gid",
-			"type": "INT"
+			"type": "INT",
+			"unique": true
 		},
 		{
 			"comment": "群头像",
@@ -19,6 +20,18 @@
 			"type": "STRING",
 			"restrict": {
 				"is": ["^https://i.loli.net/*"],
+				"property": [
+					"isUrl"
+				]
+			}
+		},
+		{
+			"comment": "入群码",
+			"name": "invite_code",
+			"type": "STRING",
+			"restrict": {
+				"min_length": 6,
+				"max_length": 6,
 				"property": [
 					"isUrl"
 				]

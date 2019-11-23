@@ -1,6 +1,8 @@
 'use-strict';
-const log = require('./logger');
+
 const url = require('url');
+
+const log = require('../logger');
 
 const commonLog = (req) => {
 	log.debug(`received request ${req.rawHeaders}`);
@@ -17,6 +19,8 @@ const commonLog = (req) => {
 		params: query
 	};
 	log.info(`requested for service :${JSON.stringify(serv)}`);
+	log.info('request body', req.body);
+	log.info('request session', req.session);
 	// // 返回解析的服务名称和参数
 	// return serv;
 };

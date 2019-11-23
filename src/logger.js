@@ -10,19 +10,19 @@ const log = global.log = bunyan.createLogger({
 	}, {
 		level: 'info',
 		type: 'rotating-file',
-		path: './log/infos.log',
+		path: './log/info/infos.log',
 		period: '6h', // daily rotation : '1d'
 		count: 64 // keep copies
 	}, {
 		level: 'debug',
 		type: 'rotating-file',
-		path: './log/debug.log',
+		path: './log/debug/debug.log',
 		period: '8h',
 		count: 64
 	}, {
 		level: 'warn',
 		type: 'rotating-file',
-		path: './log/warn.log',
+		path: './log/warn/warn.log',
 		period: '1d',
 		count: 64
 	}]

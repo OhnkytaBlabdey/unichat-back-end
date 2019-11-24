@@ -15,6 +15,7 @@
 	},
 	"rules": {
 		"no-use-before-define": "error",
+		"comma-spacing": "warn",
 		"init-declarations": "warn",
 		"semi": "warn",
 		"quotes": ["warn", "single"],

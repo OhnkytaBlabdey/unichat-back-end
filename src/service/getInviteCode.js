@@ -2,6 +2,7 @@
 
 const url = require('url');
 const stringRandom = require('string-random');
+const moment = require('moment');
 
 const log = require('../logger');
 const Status = require('../status');
@@ -79,9 +80,13 @@ const GetInviteCode = (req, res) => {
 				return;
 			}
 			log.info('需要产生邀请的群聊', group.dataValues);
+			log.info('时间戳', group.dataValues.updatedAt);
 			// TODO 时间戳转Date
-			const dist = group.dataValues.updatedAt.getDay() - new Date().getDay();
-			// const dist = 8;
+			// e.g. 2019-11-23T15:27:52.000Z
+			const oldDate = moment(group.dataValues.updatedAt).toDate();
+			const dist = ((new Date().getTime() - oldDate.getTime()) / (1000 * 60 * 60 * 24));
+			log.debug(new Date().getTime(), oldDate.getTime());
+			log.debug('diff', dist);
 			if (dist > 7) {
 				const code = (gid % 100) + stringRandom(4);
 				Group.update({

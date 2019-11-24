@@ -2,12 +2,12 @@
 	"cols": [{
 		"name": "group_id",
 		"type": "INT",
-		"comment": "群的ID",
+		"comment": "群的GID",
 		"restrict": {}
 	}, {
 		"name": "user_id",
 		"type": "INT",
-		"comment": "用户的ID",
+		"comment": "用户的UID",
 		"restrict": {}
 	}, {
 		"name": "role",

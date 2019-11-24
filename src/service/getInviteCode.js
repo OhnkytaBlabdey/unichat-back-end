@@ -26,8 +26,8 @@ const GetInviteCode = (req, res) => {
 		});
 		return;
 	}
+	const uid = req.session.user.uid;
 	const params = url.parse(req.url, true).query || req.body;
-	const uid = params.uid || null;
 	const gid = params.gid || null;
 
 	UserInGroup.count({
@@ -55,7 +55,7 @@ const GetInviteCode = (req, res) => {
 			return;
 		}
 		Group.findOne({
-			attributes: ['updatedAt'],
+			attributes: ['updatedAt', 'invite_code'],
 			where: {
 				gid: gid
 			}
@@ -102,10 +102,8 @@ const GetInviteCode = (req, res) => {
 				}).then((matched) => {
 					if (matched) {
 						res.send({
-							desc: {
-								inviteCode: code
-							},
-							msg: 'ok',
+							inviteCode: code,
+							msg: 'get invite code ok',
 							status: Status.OK
 						});
 					} else {
@@ -116,6 +114,13 @@ const GetInviteCode = (req, res) => {
 						});
 						return;
 					}
+				});
+			} else {
+				log.info('use old invite_code', group.dataValues.invite_code);
+				res.send({
+					inviteCode: group.dataValues.invite_code,
+					msg: 'get invite code ok',
+					status: Status.OK
 				});
 			}
 		}).catch((err) => {

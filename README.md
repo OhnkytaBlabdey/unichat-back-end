@@ -37,7 +37,7 @@ database API for `unichat`
 
     -   昵称 `nickname`
     -   邮箱地址 `emailAddr`
-    -   密码的 hash 值 `passwordHash`
+    -   hash(hash(password) 连接 captcha) `passwordHash`
     -   验证码 `captcha`
 
     备注
@@ -64,7 +64,7 @@ database API for `unichat`
         -   新头像的 URL `avatar`
     -   必须在期限内登录过的用户才可以使用这个接口
 
--   用户创建群聊
+-   用户创建群聊 `GET POST`
 
     PATH `/createGroup`
 
@@ -76,6 +76,18 @@ database API for `unichat`
     备注
 
     -   必须登录过的用户才可以使用
+
+-   用户获取邀请码 `GET POST`
+    PATH `/getInviteCode`
+
+    参数列表
+
+    -   群聊可见的 ID `gid`
+
+    备注
+
+    -   登录过的用户
+    -   用户是这个群的成员
 
 ## 文件说明
 
@@ -159,8 +171,8 @@ database API for `unichat`
 2.  群
     -   ~~用户创建群~~
     -   用户为群改名
-    -   （群内用户）分享群聊
-        -   注：一定时间内的邀请码是不变的
+    -   ~~（群内用户）分享群聊~~
+        -   ~~注：一定时间内的邀请码是不变的~~
     -   **用户加入群**
     -   用户退出群
     -   查询群里所有用户

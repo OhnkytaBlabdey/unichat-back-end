@@ -1,6 +1,9 @@
 'use-strict';
 
 const svgCaptcha = require('svg-captcha');
+const {
+	convert
+} = require('convert-svg-to-png');
 
 const log = require('../logger');
 
@@ -21,14 +24,14 @@ const log = require('../logger');
  * @param {*} req
  * @param {*} res
  */
-const Captcha = (req, res) => {
+const Captcha = async (req, res) => {
 	const captcha = svgCaptcha.createMathExpr({
-		size: 6,
 		color: true,
-		noise: 4,
 		mathMax: 101,
 		mathMin: -16,
-		mathOperator: '+/-'
+		mathOperator: '+/-',
+		noise: 4,
+		size: 6
 	});
 	if (!req.session) {
 		log.warn('session not created');
@@ -39,9 +42,10 @@ const Captcha = (req, res) => {
 	if (!req.session.captcha) {
 		log.warn('session has no attribute captcha', req.session);
 	}
-	res.type('svg')
+	const img = await convert(captcha.data);
+	res.type('image/png')
 		.status(200)
-		.send(captcha.data);
+		.send(img);
 };
 
 module.exports = Captcha;

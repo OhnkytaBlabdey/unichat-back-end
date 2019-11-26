@@ -16,7 +16,7 @@ const Limit = require('./util/frequecyLimit');
 
 const app = express();
 
-const serverPort = 7890;
+const serverPort = 10010;
 
 app
 	.all('*', function (req, res, next) {

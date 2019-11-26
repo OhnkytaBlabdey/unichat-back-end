@@ -34,7 +34,7 @@ const SignUp = (req, res) => {
 	const nickname = params.nickname;
 	const password = params.password;
 	const emailAddr = params.emailAddr;
-	const profile = params.profile || 'this guy has no profile';
+	const profile = params.profile;
 	const avatarUrl = 'https://i.loli.net/';
 	const captcha = params.captcha;
 	if (!req.session.captcha ||

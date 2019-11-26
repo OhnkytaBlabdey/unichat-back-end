@@ -23,20 +23,20 @@ const log = require('../logger');
  * @param {*} req
  * @param {*} res
  */
+const useSvg = false;
 const Captcha = async (req, res) => {
-	const captcha = svgCaptcha.createMathExpr({
-		color: true,
-		mathMax: 101,
-		mathMin: -16,
-		mathOperator: '+/-',
-		noise: 4,
-		size: 6
-	});
-	if (!req.session) {
-		log.warn('session not created');
-	}
-	const useSvg = false;
-	const handle = useSvg && (async (req, res) => {
+	if (useSvg) {
+		const captcha = svgCaptcha.createMathExpr({
+			color: true,
+			mathMax: 101,
+			mathMin: -16,
+			mathOperator: '+/-',
+			noise: 4,
+			size: 6
+		});
+		if (!req.session) {
+			log.warn('session not created');
+		}
 		req.session.captcha = captcha.text;
 		log.debug(req.session);
 		log.debug(`captcha generated:[${captcha.text}]`);
@@ -46,47 +46,18 @@ const Captcha = async (req, res) => {
 		res.type('svg')
 			.status(200)
 			.send(captcha.data);
-	}) || (async (req, res) => {
-		const {
-			text,
-			img
-		} = await trekCaptcha();
-		req.session.captcha = text;
+	} else {
+		const captcha = await trekCaptcha();
+		req.session.captcha = captcha.token;
 		log.debug(req.session);
-		log.debug('captcha generated:', text);
+		log.debug('captcha generated:', captcha.token);
 		if (!req.session.captcha) {
 			log.warn('session has no attribute captcha', req.session);
 		}
 		res.type('image/gif')
 			.status(200)
-			.send(img);
-	});
-	handle(req, res);
-	// if (useSvg) {
-	// 	req.session.captcha = captcha.text;
-	// 	log.debug(req.session);
-	// 	log.debug(`captcha generated:[${captcha.text}]`);
-	// 	if (!req.session.captcha) {
-	// 		log.warn('session has no attribute captcha', req.session);
-	// 	}
-	// 	res.type('svg')
-	// 		.status(200)
-	// 		.send(captcha.data);
-	// } else {
-	// 	const {
-	// 		text,
-	// 		img
-	// 	} = await trekCaptcha();
-	// 	req.session.captcha = text;
-	// 	log.debug(req.session);
-	// 	log.debug('captcha generated:', text);
-	// 	if (!req.session.captcha) {
-	// 		log.warn('session has no attribute captcha', req.session);
-	// 	}
-	// 	res.type('image/gif')
-	// 		.status(200)
-	// 		.send(img);
-	// }
+			.send(captcha.buffer);
+	}
 };
 
 module.exports = Captcha;

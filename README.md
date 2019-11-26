@@ -6,7 +6,7 @@ database API for `unichat`
 
 ### 服务器主机 [https://47.102.140.37:10010/](https://47.102.140.37:10010/)
 
--   用户注册 `GET POST`
+-   用户注册 `POST`
 
     PATH `/signup`
 
@@ -29,7 +29,7 @@ database API for `unichat`
 
     备注：验证码的文本存储在该请求的 session 中
 
--   用户登录 `GET POST`
+-   用户登录 `POST`
 
     PATH `/signin`
 

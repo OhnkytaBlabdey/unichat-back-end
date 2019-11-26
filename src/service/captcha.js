@@ -1,9 +1,8 @@
 'use-strict';
 
 const svgCaptcha = require('svg-captcha');
-const {
-	convert
-} = require('convert-svg-to-png');
+const trekCaptcha = require('trek-captcha');
+
 
 const log = require('../logger');
 
@@ -36,16 +35,58 @@ const Captcha = async (req, res) => {
 	if (!req.session) {
 		log.warn('session not created');
 	}
-	req.session.captcha = captcha.text;
-	log.debug(req.session);
-	log.debug(`captcha generated:[${captcha.text}]`);
-	if (!req.session.captcha) {
-		log.warn('session has no attribute captcha', req.session);
-	}
-	const img = await convert(captcha.data);
-	res.type('image/png')
-		.status(200)
-		.send(img);
+	const useSvg = false;
+	const handle = useSvg && (async (req, res) => {
+		req.session.captcha = captcha.text;
+		log.debug(req.session);
+		log.debug(`captcha generated:[${captcha.text}]`);
+		if (!req.session.captcha) {
+			log.warn('session has no attribute captcha', req.session);
+		}
+		res.type('svg')
+			.status(200)
+			.send(captcha.data);
+	}) || (async (req, res) => {
+		const {
+			text,
+			img
+		} = await trekCaptcha();
+		req.session.captcha = text;
+		log.debug(req.session);
+		log.debug('captcha generated:', text);
+		if (!req.session.captcha) {
+			log.warn('session has no attribute captcha', req.session);
+		}
+		res.type('image/gif')
+			.status(200)
+			.send(img);
+	});
+	handle(req, res);
+	// if (useSvg) {
+	// 	req.session.captcha = captcha.text;
+	// 	log.debug(req.session);
+	// 	log.debug(`captcha generated:[${captcha.text}]`);
+	// 	if (!req.session.captcha) {
+	// 		log.warn('session has no attribute captcha', req.session);
+	// 	}
+	// 	res.type('svg')
+	// 		.status(200)
+	// 		.send(captcha.data);
+	// } else {
+	// 	const {
+	// 		text,
+	// 		img
+	// 	} = await trekCaptcha();
+	// 	req.session.captcha = text;
+	// 	log.debug(req.session);
+	// 	log.debug('captcha generated:', text);
+	// 	if (!req.session.captcha) {
+	// 		log.warn('session has no attribute captcha', req.session);
+	// 	}
+	// 	res.type('image/gif')
+	// 		.status(200)
+	// 		.send(img);
+	// }
 };
 
 module.exports = Captcha;

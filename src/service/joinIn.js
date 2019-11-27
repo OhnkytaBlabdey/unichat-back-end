@@ -38,7 +38,7 @@ const JoinIn = (req, res) => {
 		UIG.count({
 			where: {
 				group_id: group.gid,
-				user_id: req.session.uid
+				user_id: req.session.user.uid
 			}
 		}).then((ct) => {
 			if (ct > 0) {
@@ -68,11 +68,11 @@ const JoinIn = (req, res) => {
 					status: Status.OK
 				});
 			});
-		}).catch((err)=>{
+		}).catch((err) => {
 			log.warn('count uig', err);
 			res.send({
-				msg:'internal error',
-				status:Status.FAILED
+				msg: 'internal error',
+				status: Status.FAILED
 			});
 		});
 	});

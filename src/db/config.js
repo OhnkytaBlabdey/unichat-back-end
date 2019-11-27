@@ -14,7 +14,7 @@ const connection = new Sequelize('unichat', 'OAO', pw, {
 	dialectOptions: {
 		// requestTimeout: 3
 	},
-	host: '47.102.140.37',
+	host: '127.0.0.1',
 	isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
 	logging: (sql) => {
 		log.warn(sql);

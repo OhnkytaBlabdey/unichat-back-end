@@ -32,40 +32,47 @@ const JoinIn = (req, res) => {
 			});
 			return;
 		}
-	}).then(async (group) => {
+	}).then((group) => {
 		log.info('found group with invite code');
 		// TODO 判断用户是否已经在群聊中
-		const ct = await UIG.count({
+		UIG.count({
 			where: {
 				group_id: group.gid,
 				user_id: req.session.uid
 			}
-		});
-		if (ct > 0) {
-			log.info('user already in group');
-			res.send({
-				msg: '您已经是群成员',
-				status: Status.FAILED
-			});
-			return;
-		}
-		UIG.create({
-			group_id: group.gid,
-			role: 'normal',
-			user_id: req.session.user.uid
-		}).catch((err) => {
-			if (err) {
-				log.warn('join in group failed.', err);
+		}).then((ct) => {
+			if (ct > 0) {
+				log.info('user already in group');
 				res.send({
-					msg: '加入群聊失败',
+					msg: '您已经是群成员',
 					status: Status.FAILED
 				});
+				return;
 			}
-		}).then((uig) => {
-			log.info('user joined group', uig);
+			UIG.create({
+				group_id: group.gid,
+				role: 'normal',
+				user_id: req.session.user.uid
+			}).catch((err) => {
+				if (err) {
+					log.warn('join in group failed.', err);
+					res.send({
+						msg: '加入群聊失败',
+						status: Status.FAILED
+					});
+				}
+			}).then((uig) => {
+				log.info('user joined group', uig);
+				res.send({
+					msg: '加入成功',
+					status: Status.OK
+				});
+			});
+		}).catch((err)=>{
+			log.warn('count uig', err);
 			res.send({
-				msg: '加入成功',
-				status: Status.OK
+				msg:'internal error',
+				status:Status.FAILED
 			});
 		});
 	});

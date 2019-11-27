@@ -36,6 +36,8 @@ Router
 	.post('/createGroup', services.createGroup)
 	.get('/getInviteCode', services.getInviteCode)
 	.post('/getInviteCode', services.getInviteCode)
+	.get('/joinIn', services.joinIn)
+	.post('/joinIn', services.joinIn)
 	//=============================================================
 	//                                                             
 	//   ####    ###    #####   ######   ####  ##   ##    ###    

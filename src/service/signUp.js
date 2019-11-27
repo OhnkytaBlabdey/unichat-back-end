@@ -2,9 +2,23 @@
 
 const crypto = require('crypto');
 const log = require('../logger');
+const url = require('url');
 const Status = require('../status');
 const User = require('../db/po/user_model');
 const getId = require('../util/uidGen');
+
+const defaultAvatars = [
+	'https://i.loli.net/2019/11/27/ecbFyZJQXTlRo64.jpg',
+	'https://i.loli.net/2019/11/27/jNS8nb2PdLuDUa4.png',
+	'https://i.loli.net/2019/11/27/jOAhSILkHlvKg9U.jpg',
+	'https://i.loli.net/2019/11/27/oGQXrqcuIjx2YPi.png',
+	'https://i.loli.net/2019/11/27/TdVbNCFGgf3wajr.png',
+	'https://i.loli.net/2019/11/27/ucNWxiF73IbpEQm.png',
+	'https://i.loli.net/2019/11/27/x89khWu1oPBlHsb.jpg',
+	'https://i.loli.net/2019/11/27/yceN7TaRSVQzOLG.png',
+	'https://i.loli.net/2019/11/27/yCrB5fqItSHZYRM.png',
+	'https://i.loli.net/2019/11/27/YfzQ5BU86F1Divh.png'
+];
 
 //====================================================================================================================================
 //
@@ -26,16 +40,14 @@ const getId = require('../util/uidGen');
  */
 const SignUp = (req, res) => {
 	// 解析请求
-	// postData = querystring.parse();
-	let params = req.body;
-	// const params = req.body;
+	const params = url.parse(req.url, true).query || req.body;
 	log.info(`\nsignup request ${JSON.stringify(params)}`);
 	let result = {};
 	const nickname = params.nickname;
 	const password = params.password;
 	const emailAddr = params.emailAddr;
 	const profile = params.profile;
-	const avatarUrl = 'https://i.loli.net/';
+	const avatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
 	const captcha = params.captcha;
 	if (!req.session.captcha ||
 		!captcha ||
@@ -63,10 +75,7 @@ const SignUp = (req, res) => {
 		return;
 	}
 
-	/* 
-	const avatar = null;
-	const uid = null; */
-	User.findOne({
+	User.count({
 		where: {
 			nickname: nickname
 		}
@@ -82,12 +91,10 @@ const SignUp = (req, res) => {
 			});
 			return;
 		}
-	}).then((user) => {
-		if (user) {
+	}).then((ct) => {
+		if (ct) {
 			log.info(
-				`nickname [${nickname}] has been taken by user [${JSON.stringify(
-							user
-						)}]`
+				`nickname [${nickname}] has been taken.`
 			);
 			result['status'] = Status.FAILED;
 			result['desc'] = `nickname [${nickname}] has been taken.`;
@@ -110,7 +117,7 @@ const SignUp = (req, res) => {
 				hash.update(password);
 				const passwordHash = hash.digest('hex');
 				User.create({
-					avatar: avatarUrl,
+					avatar: avatar,
 					email_addr: emailAddr,
 					nickname: nickname,
 					password_hash: passwordHash,
@@ -146,6 +153,7 @@ const SignUp = (req, res) => {
 					);
 					result['status'] = Status.OK;
 					result['desc'] = {
+						avatar: avatar,
 						nickname: user.nickname,
 						uid: user.uid
 					};

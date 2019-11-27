@@ -32,9 +32,23 @@ const JoinIn = (req, res) => {
 			});
 			return;
 		}
-	}).then((group) => {
+	}).then(async (group) => {
 		log.info('found group with invite code');
 		// TODO 判断用户是否已经在群聊中
+		const ct = await UIG.count({
+			where: {
+				group_id: group.gid,
+				user_id: req.session.uid
+			}
+		});
+		if (ct > 0) {
+			log.info('user already in group');
+			res.send({
+				msg: '您已经是群成员',
+				status: Status.FAILED
+			});
+			return;
+		}
 		UIG.create({
 			group_id: group.gid,
 			role: 'normal',

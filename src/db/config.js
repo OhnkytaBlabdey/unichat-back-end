@@ -22,7 +22,7 @@ const connection = new Sequelize('unichat', 'OAO', pw, {
 	omitNull: true,
 	pool: {
 		max: 3,
-		maxIdleTime: 10000,
+		maxIdleTime: 1 * 60 * 1000,
 		min: 0
 	},
 	port: '3306',
@@ -30,5 +30,13 @@ const connection = new Sequelize('unichat', 'OAO', pw, {
 		force: true
 	}
 });
-
+connection.authenticate().then(() => {
+	log.info('connected.');
+	return;
+}).catch((err) => {
+	if (err) {
+		log.warn('connect failed', err);
+		return;
+	}
+});
 module.exports = connection;

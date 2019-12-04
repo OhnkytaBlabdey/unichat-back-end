@@ -15,9 +15,9 @@ const Limit = (req, res, next) => {
 	if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
 		req.session.lastAccess = lastAccess.getTime();
 		res.send({
-			status: Status.FAILED,
 			desc: 'you access this app too frequently',
-			msg: 'だが断る'
+			msg: 'だが断る',
+			status: Status.FAILED
 		});
 		return;
 	} else if (req.session.lastAccess) {

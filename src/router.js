@@ -38,6 +38,8 @@ Router
 	.post('/getInviteCode', services.getInviteCode)
 	.get('/joinIn', services.joinIn)
 	.post('/joinIn', services.joinIn)
+	.get('/kick', services.kick)
+	.post('/kick', services.kick)
 	//=============================================================
 	//                                                             
 	//   ####    ###    #####   ######   ####  ##   ##    ###    

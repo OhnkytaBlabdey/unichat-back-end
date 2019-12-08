@@ -9,6 +9,7 @@ const Index = require('./service/index');
 const Modify = require('./service/modify');
 const GetInviteCode = require('./service/getInviteCode');
 const JoinIn = require('./service/joinIn');
+const Kick = require('./service/kick');
 
 const services = {
 	captcha: captcha,
@@ -16,6 +17,7 @@ const services = {
 	getInviteCode: GetInviteCode,
 	index: Index,
 	joinIn: JoinIn,
+	kick: Kick,
 	modify: Modify,
 	signin: SignIn,
 	signup: signUp

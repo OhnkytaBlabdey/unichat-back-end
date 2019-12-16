@@ -1,14 +1,11 @@
 'use-strict';
 
-const trekCaptcha = require('trek-captcha');
-
-const fun = () => {
-	trekCaptcha({
-		size: 5,
-		style: -1
-	}).then((captcha) => {
-		console.log(captcha.buffer, captcha.token);
-	});
-};
-
-fun();
+const l = [{
+	a: '1'
+}, {
+	a: '2'
+}];
+const l2 = l.map((it) => {
+	return it.a;
+});
+console.log(l2);

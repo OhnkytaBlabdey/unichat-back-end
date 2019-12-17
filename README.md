@@ -156,9 +156,26 @@ database API for `unichat`
 
         此说明文件
 
+-   后台返回 JSON 的约定
+
+    -   status
+
+        3 种
+
+        -   `OK`
+        -   `FAILED`
+        -   `UNAUTHORIZED`
+
+    -   msg
+
+        用于给用户看的文字
+
+    -   dat
+
+        查询返回的数据对象，看情况处理
+
 ## TODO:
 
--   后台返回 JSON 的约定
 -   调用接口的**认证**方式
     -   session 中存储，交给 express 处理过期等问题
 -   确定编码规范

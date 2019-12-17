@@ -1,11 +1,13 @@
 'use-strict';
 
 const crypto = require('crypto');
-const log = require('../logger');
 const url = require('url');
+
+const getId = require('../util/uidGen');
+const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const User = require('../db/po/user_model');
-const getId = require('../util/uidGen');
 
 const defaultAvatars = [
 	'https://i.loli.net/2019/11/27/ecbFyZJQXTlRo64.jpg',
@@ -34,8 +36,8 @@ const defaultAvatars = [
  * 前提：用户输入正确的字段信息，符合约束，验证码正确
  * 结果：在库里添加用户记录，告诉用户注册成功，以及分配的uid
  *
- * @param {*} req
- * @param {*} res
+ * @param {Request} req
+ * @param {Response} res
  * @returns
  */
 const SignUp = (req, res) => {
@@ -49,7 +51,6 @@ const SignUp = (req, res) => {
 		params = req.body;
 	}
 	log.info(`\nsignup request ${JSON.stringify(params)}`);
-	let result = {};
 	const nickname = params.nickname;
 	const password = params.password;
 	const emailAddr = params.emailAddr;
@@ -63,22 +64,16 @@ const SignUp = (req, res) => {
 		log.debug('invalid request for signup');
 		log.debug(`captcha:${captcha}`);
 		log.debug(`session.captcha:${req.session.captcha}`);
-		res.send({
-			desc: 'invalid captcha',
-			msg: '验证码错误',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'验证码错误', 'invalid captcha');
 		req.session.captcha = null;
 		return;
 	}
 
 	req.session.captcha = null;
 	if (!(nickname && password && emailAddr)) {
-		res.send({
-			desc: 'param needed',
-			msg: '昵称、密码和邮件地址不能为空',
-			status: Status.FAILED
-		});
+		sendMsg(res, Status.FAILED,
+			'昵称、密码和邮件地址不能为空', 'param needed');
 		return;
 	}
 
@@ -88,33 +83,23 @@ const SignUp = (req, res) => {
 		}
 	}).catch((err) => {
 		if (err) {
-			log.error({
-				dberr: err
-			});
-			res.send({
-				desc: `internal error${err.parent.code}`,
-				msg: '内部错误',
-				status: Status.FAILED
-			});
+			log.error('when checking duplicated username', err);
+			res.status(500);
+			sendMsg(res, Status.FAILED, '内部错误', 'internal error');
 			return;
 		}
 	}).then((ct) => {
 		if (ct) {
-			log.info(
-				`nickname [${nickname}] has been taken.`
-			);
-			result['status'] = Status.FAILED;
-			result['desc'] = `nickname [${nickname}] has been taken.`;
-			result['msg'] = `昵称[${nickname}]已被占用`;
-			res.send(JSON.stringify(result));
+			log.info(`nickname [${nickname}] has been taken.`);
+			sendMsg(res, Status.FAILED,
+				`昵称[${nickname}]已被占用`,
+				`nickname [${nickname}] has been taken.`);
 		} else {
 			User.max('id').catch((err) => {
 				if (err) {
 					log.warn(err);
-					res.send({
-						msg: 'internal error',
-						status: Status.FAILED
-					});
+					res.status(500);
+					sendMsg(res, Status.FAILED, 'internal error');
 					return;
 				}
 			}).then((maxid) => {
@@ -132,40 +117,26 @@ const SignUp = (req, res) => {
 					uid: uid
 				}).catch((err) => {
 					if (err) {
-						log.error({
-							dberr: err
-						});
+						log.warn(err);
 					} else {
 						return;
 					}
 					if (err.name === 'SequelizeValidationError') {
-						res.send({
-							desc: 'ValidationError',
-							error: err.errors,
-							msg: '您的注册信息不符合要求',
-							status: Status.FAILED
-						});
+						sendMsg(res, Status.FAILED,
+							'您的注册信息不符合要求',
+							'ValidationError', err.errors);
 					} else {
-						res.send({
-							desc: 'internal error.',
-							msg: '内部错误',
-							status: Status.FAILED
-						});
+						res.status(500);
+						sendMsg(res, Status.FAILED,
+							'内部错误', 'internal error');
 					}
 				}).then(user => {
-					log.info(
-						`user ${JSON.stringify(
-								user
-							)} signed up successfully.`
-					);
-					result['status'] = Status.OK;
-					result['desc'] = {
+					log.info('user signed up successfully.', user);
+					sendMsg(res, Status.OK, '注册成功', null, {
 						avatar: avatar,
 						nickname: user.nickname,
 						uid: user.uid
-					};
-					result['msg'] = '注册成功';
-					res.send(JSON.stringify(result));
+					});
 				});
 			});
 		}

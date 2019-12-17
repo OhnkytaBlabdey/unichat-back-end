@@ -1,8 +1,8 @@
 'use-strict';
 
 const Status = {
-	OK: 'ok',
-	FAILED: 'failed',
-	UNAUTHORIZED: 'unauthorized'
+	FAILED: 'FAILED',
+	OK: 'OK',
+	UNAUTHORIZED: 'UNAUTHORIZED'
 };
 module.exports = Status;

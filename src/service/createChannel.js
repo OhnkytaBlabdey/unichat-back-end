@@ -16,7 +16,14 @@ const createChannel = (req, res) => {
 		});
 		return;
 	}
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const channelName = params.channelName || null;
 	const channelStrategy = params.channelStrategy || null;
 	const gid = params.gid || null;

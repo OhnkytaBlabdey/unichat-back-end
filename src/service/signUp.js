@@ -40,7 +40,14 @@ const defaultAvatars = [
  */
 const SignUp = (req, res) => {
 	// 解析请求
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	log.info(`\nsignup request ${JSON.stringify(params)}`);
 	let result = {};
 	const nickname = params.nickname;

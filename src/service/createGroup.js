@@ -33,7 +33,14 @@ const CreateGroup = (req, res) => {
 		});
 		return;
 	}
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const name = params.name;
 	const logo = params.logo;
 	Group.max('id').catch((err) => {

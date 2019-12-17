@@ -1,12 +1,13 @@
 'use-strict';
 
-const url = require('url');
-const stringRandom = require('string-random');
 const moment = require('moment');
+const stringRandom = require('string-random');
+const url = require('url');
 
-const log = require('../logger');
-const Status = require('../status');
 const Group = require('../db/po/group_model');
+const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
+const Status = require('../status');
 const UserInGroup = require('../db/po/user_in_group_model');
 //============================================================================================================
 //                                                                                                            
@@ -17,14 +18,17 @@ const UserInGroup = require('../db/po/user_in_group_model');
 //   ####    #####    ##    ##  ##     ##    ###    ##    ##    #####   ####   #####   ####    #####        
 //                                                                                                            
 //============================================================================================================
-
+/**
+ *
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @returns
+ */
 const GetInviteCode = (req, res) => {
 	if (!req.session.isvalid) {
-		res.send({
-			desc: 'unauthorized action',
-			msg: '未授权的请求',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'您没有登录');
 		return;
 	}
 	const uid = req.session.user.uid;
@@ -46,20 +50,15 @@ const GetInviteCode = (req, res) => {
 	}).catch((err) => {
 		if (err) {
 			log.warn(err);
-			res.send({
-				desc: 'internal error',
-				msg: '服务器内部错误',
-				status: Status.FAILED
-			});
+			res.status(500);
+			sendMsg(res, Status.FAILED,
+				'内部错误', 'internal error');
 			return;
 		}
 	}).then((ct) => {
 		if (!ct) {
-			res.send({
-				desc: 'unauthorized action',
-				msg: '未授权的请求',
-				status: Status.UNAUTHORIZED
-			});
+			sendMsg(res, Status.UNAUTHORIZED,
+				'未授权的请求');
 			return;
 		}
 		Group.findOne({
@@ -70,20 +69,16 @@ const GetInviteCode = (req, res) => {
 		}).catch((err) => {
 			if (err) {
 				log.warn(err);
-				res.send({
-					desc: 'internal error',
-					msg: '服务器内部错误',
-					status: Status.FAILED
-				});
+				res.status(500);
+				sendMsg(res, Status.FAILED,
+					'内部错误', 'internal error');
 				return;
 			}
 		}).then((group) => {
 			if (!group) {
-				res.send({
-					desc: 'internal error',
-					msg: '服务器内部错误',
-					status: Status.FAILED
-				});
+				res.status(500);
+				sendMsg(res, Status.FAILED,
+					'内部错误', 'internal error');
 				return;
 			}
 			log.info('需要产生邀请的群聊', group.dataValues);
@@ -92,8 +87,8 @@ const GetInviteCode = (req, res) => {
 			// e.g. 2019-11-23T15:27:52.000Z
 			const oldDate = moment(group.dataValues.updatedAt).toDate();
 			const dist = ((new Date().getTime() - oldDate.getTime()) / (1000 * 60 * 60 * 24));
-			log.debug(new Date().getTime(), oldDate.getTime());
-			log.debug('diff', dist);
+			// log.debug(new Date().getTime(), oldDate.getTime());
+			// log.debug('diff', dist);
 			if (dist > 7) {
 				const code = (gid % 100) + stringRandom(4);
 				Group.update({
@@ -106,42 +101,34 @@ const GetInviteCode = (req, res) => {
 				}).catch((err) => {
 					if (!err) return;
 					log.warn(err);
-					res.send({
-						desc: err,
-						msg: 'internal error',
-						status: Status.FAILED
-					});
+					res.status(500);
+					sendMsg(res, Status.FAILED,
+						'内部错误', 'internal error');
 				}).then((matched) => {
 					if (matched) {
-						res.send({
-							inviteCode: code,
-							msg: 'get invite code ok',
-							status: Status.OK
+						sendMsg(res, Status.OK, null, null, {
+							inviteCode: code
 						});
 					} else {
-						res.send({
-							desc: 'internal error',
-							msg: '服务器内部错误',
-							status: Status.FAILED
-						});
+						res.status(500);
+						sendMsg(res, Status.FAILED,
+							'内部错误', 'internal error');
 						return;
 					}
 				});
 			} else {
-				log.info('use old invite_code', group.dataValues.invite_code);
-				res.send({
-					inviteCode: group.dataValues.invite_code,
-					msg: 'get invite code ok',
-					status: Status.OK
+				log.info('use old invite_code',
+					group.dataValues.invite_code);
+				sendMsg(res, Status.OK, null, null, {
+					inviteCode: group.dataValues.invite_code
 				});
 			}
 		}).catch((err) => {
 			if (err) {
-				res.send({
-					desc: 'internal error',
-					msg: '服务器内部错误',
-					status: Status.FAILED
-				});
+				log.warn(err);
+				res.status(500);
+				sendMsg(res, Status.FAILED,
+					'内部错误', 'internal error');
 				return;
 			}
 		});

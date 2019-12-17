@@ -2,18 +2,17 @@
 
 const url = require('url');
 
-const log = require('../logger');
-const Status = require('../status');
 const Channel = require('../db/po/channel_model');
 const CIG = require('../db/po/channel_in_group_model');
+const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
+const Status = require('../status');
 
 const createChannel = (req, res) => {
 	log.debug('create channel requested.');
 	if (!req.session.isvalid) {
-		res.send({
-			msg: '您未登录',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'您没有登录');
 		return;
 	}
 	let params = null;
@@ -37,15 +36,13 @@ const createChannel = (req, res) => {
 			group_id: gid
 		}).then((cig) => {
 			log.debug('created', cig);
-			res.send({
-				status: Status.OK
-			});
+			sendMsg(res, Status.OK, '创建成功');
 		}).catch((err) => {
 			if (err) {
 				log.warn(err);
-				res.send({
-					status: Status.FAILED
-				});
+				res.status(500);
+				sendMsg(res, Status.FAILED,
+					'内部错误', 'internal error');
 			}
 		});
 	}).catch((err) => {

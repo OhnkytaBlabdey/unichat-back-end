@@ -2,8 +2,9 @@
 
 const url = require('url');
 
-const Status = require('../status');
 const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
+const Status = require('../status');
 const User = require('../db/po/user_model');
 
 //======================================================
@@ -20,17 +21,14 @@ const User = require('../db/po/user_model');
  * 前提：用户已经登录
  * 前提：修改后的字段符合约束
  * 结果：修改该用户在库里的记录
- * @param {*} req
- * @param {*} res
+ * @param {Request} req
+ * @param {Response} res
  */
 
 const Modify = (req, res) => {
 	if (!req.session.isvalid || !req.session.user) {
-		res.send({
-			desc: 'you have not yet signed in',
-			msg: 'だが断る',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'您没有登录', 'you have not yet signed in', 'だが断る');
 	}
 	let params = null;
 	log.info(req.method);
@@ -61,18 +59,13 @@ const Modify = (req, res) => {
 		}).catch((err) => {
 			if (!err) return;
 			log.warn(err);
-			res.send({
-				desc: err,
-				msg: 'internal error',
-				status: Status.FAILED
-			});
+			res.status(500);
+			sendMsg(res, Status.FAILED,
+				'内部错误', 'internal error');
 		}).then((matched) => {
 			log.info(`matched user: ${matched}`);
-			res.send({
-				desc: kv,
-				msg: '修改成功',
-				status: Status.OK
-			});
+			sendMsg(res, Status.OK,
+				'修改成功', null, kv);
 		});
 	}
 };

@@ -3,16 +3,15 @@
 const url = require('url');
 
 const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UIG = require('../db/po/user_in_group_model');
 
 const Kick = (req, res) => {
 	log.debug('kick user requested.');
 	if (!req.session.isvalid) {
-		res.send({
-			msg: '您未登录',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'您没有登录');
 		return;
 	}
 	let params = null;
@@ -49,35 +48,25 @@ const Kick = (req, res) => {
 				}
 			}).then((ct) => {
 				if (ct) {
-					res.send({
-						desc: 'deleted',
-						msg: '踢出成功',
-						status: Status.OK
-					});
+					sendMsg(res, Status.OK,
+						'踢出成功', 'deleted');
 				} else {
-					res.send({
-						desc: 'not deleted',
-						msg: '无法踢出',
-						status: Status.FAILED
-					});
+					sendMsg(res, Status.FAILED,
+						'无法踢出', 'not deleted');
 				}
 			}).catch((err) => {
 				log.warn('kick', err);
-				res.send({
-					desc: 'internal error',
-					msg: '内部错误',
-					status: Status.FAILED
-				});
+				res.status(500);
+				sendMsg(res, Status.FAILED,
+					'内部错误', 'internal error');
 			});
 		}
 	}).catch((err) => {
 		if (err) {
 			log.warn('kick', err);
-			res.send({
-				desc: 'failed',
-				msg: 'failed',
-				status: Status.FAILED
-			});
+			res.status(500);
+			sendMsg(res, Status.FAILED,
+				'内部错误', 'internal error');
 		}
 	});
 

@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var adaro = require('adaro');
 
 // var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -15,8 +16,9 @@ const Limit = require('./src/util/frequecyLimit');
 var app = express();
 
 // view engine setup
+app.engine('dust', adaro.dust());
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'dust');
 
 app.use(logger('dev'));
 app

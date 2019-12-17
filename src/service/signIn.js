@@ -38,13 +38,22 @@ const SignIn = (req, res) => {
 		return;
 	}
 	// 解析请求
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const nickname = params.nickname || null;
 	const emailAddr = params.emailAddr || null;
 	const passwordHash = params.passwordHash || null;
 	const captcha = params.captcha || null;
+	// log.info('req', req);
+	log.info('params', params);
 	if (captcha != req.session.captcha) {
-		log.debug(`wrong captcha${captcha}`);
+		log.debug(`wrong captcha ${captcha} ${req.session.captcha}`);
 		req.session.captcha = null;
 		res.send({
 			desc: 'wrong captcha',

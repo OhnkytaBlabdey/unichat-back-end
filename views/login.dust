@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{title}</title>
+		<link rel="stylesheet" href="/stylesheets/style.css" />
+	</head>
+	<body>
+		<h1>{title}</h1>
+		<div id="login">
+			<form action="/signin" method="post" target="_blank">
+				<input type="text" name="nickname" placeholder="nickname" /><br />
+				<input type="text" name="emailAddr" placeholder="emailAddr@qq.com" /><br />
+				<input type="text" name="passwordHash" placeholder="dddfd" /><br />
+				<input type="text" name="captcha" placeholder="asdfg" /><br />
+				<br />
+				<input type="submit" value="Submit" />
+			</form>
+		</div>
+		<img src="/captcha" alt="captcha" />
+	</body>
+</html>

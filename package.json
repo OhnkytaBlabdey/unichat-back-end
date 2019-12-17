@@ -7,7 +7,7 @@
 		"apply": "node ./src/db/po/apply_model.js | .\\node_modules\\.bin\\bunyan",
 		"pm": "pm2 start ./src/index.js",
 		"start_index": "node ./src/index.js | .\\node_modules\\.bin\\bunyan",
-		"start": "set PORT=10000 && set NODE_ENV=production && node ./bin/www | .\\node_modules\\.bin\\bunyan",
+		"start": "set PORT=10010 && set NODE_ENV=production && node ./bin/www | .\\node_modules\\.bin\\bunyan",
 		"test": "node ./src/test.js | .\\node_modules\\.bin\\bunyan"
 	},
 	"keywords": [

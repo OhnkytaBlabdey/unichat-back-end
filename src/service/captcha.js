@@ -20,8 +20,8 @@ const log = require('../logger');
  * 前提：请求不可以过于频繁
  * 结果：在请求者的session里记录验证码的文本，把图像发送给请求者
  *
- * @param {*} req
- * @param {*} res
+ * @param {Request} req
+ * @param {Response} res
  */
 const useSvg = false;
 const Captcha = async (req, res) => {

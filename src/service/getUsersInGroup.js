@@ -3,16 +3,15 @@
 const url = require('url');
 
 const log = require('../logger');
+const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UIG = require('../db/po/user_in_group_model');
 
 const getUsers = (req, res) => {
 	log.debug('get users in group requested.');
 	if (!req.session.isvalid) {
-		res.send({
-			msg: '您未登录',
-			status: Status.UNAUTHORIZED
-		});
+		sendMsg(res, Status.UNAUTHORIZED,
+			'您没有登录');
 		return;
 	}
 	let params = null;
@@ -40,10 +39,9 @@ const getUsers = (req, res) => {
 	}).catch((err) => {
 		if (err) {
 			log.warn(err);
-			res.send({
-				desc: 'internal error',
-				status: Status.FAILED
-			});
+			res.status(500);
+			sendMsg(res, Status.FAILED,
+				'内部错误', 'internal error');
 		}
 	});
 };

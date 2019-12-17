@@ -32,7 +32,14 @@ const Modify = (req, res) => {
 			status: Status.UNAUTHORIZED
 		});
 	}
-	const params = (req.methed == 'GET') && url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const colName = params.colName;
 	const newVal = params.newVal;
 	// 只能修改 【昵称 邮箱地址 头像】

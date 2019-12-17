@@ -15,7 +15,14 @@ const getUsers = (req, res) => {
 		});
 		return;
 	}
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const gid = params.gid || null;
 	UIG.findAll({
 		attributes: ['user_id'],

@@ -28,7 +28,14 @@ const GetInviteCode = (req, res) => {
 		return;
 	}
 	const uid = req.session.user.uid;
-	const params = url.parse(req.url, true).query || req.body;
+	let params = null;
+	log.info(req.method);
+	if (req.method === 'GET') {
+		params = url.parse(req.url, true).query;
+	}
+	if (req.method === 'POST') {
+		params = req.body;
+	}
 	const gid = params.gid || null;
 
 	UserInGroup.count({

@@ -2,7 +2,9 @@
 const Sequelize = require('sequelize');
 const log = require('../logger');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('src/db/config.json'));
+const path = require('path');
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
+log.debug(config);
 const pw = Math.floor(Math.pow(config.a, config.b)) + config.c;
 
 const connection = new Sequelize('unichat', 'OAO', pw, {

@@ -7,6 +7,23 @@ const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UIG = require('../db/po/user_in_group_model');
 
+//=========================================================================
+//                                                                         
+//   ####    #####  ######  ##   ##   ####  #####  #####     ####        
+//  ##       ##       ##    ##   ##  ##     ##     ##  ##   ##           
+//  ##  ###  #####    ##    ##   ##   ###   #####  #####     ###         
+//  ##   ##  ##       ##    ##   ##     ##  ##     ##  ##      ##        
+//   ####    #####    ##     #####   ####   #####  ##   ##  ####         
+//                                                                         
+//=========================================================================
+
+/**
+ *
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @returns
+ */
 const getUsers = (req, res) => {
 	log.debug('get users in group requested.');
 	if (!req.session.isvalid) {

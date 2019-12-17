@@ -6,7 +6,13 @@ const log = require('../logger');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UIG = require('../db/po/user_in_group_model');
-
+/**
+ *
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @returns
+ */
 const Kick = (req, res) => {
 	log.debug('kick user requested.');
 	if (!req.session.isvalid) {

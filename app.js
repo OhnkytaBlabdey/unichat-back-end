@@ -55,7 +55,7 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+// 应用路由
 app.use('/', appRouter);
 // app.use('/users', usersRouter);
 

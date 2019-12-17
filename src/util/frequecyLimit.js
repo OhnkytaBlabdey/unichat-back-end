@@ -8,7 +8,7 @@ const Limit = (req, res, next) => {
 	if (req.session.isvalid) {
 		frequency = 1000 / 8;
 	} else {
-		frequency = 1000 * 2;
+		frequency = 1000 * 1;
 	}
 
 	let lastAccess = new Date();

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<div id="login">
+			<form action="/signin" method="post">
+				<input type="text" name="nickname">
+				<input type="text" name="emailAddr">
+				<input type="text" name="passwordHash">
+				<input type="text" name="captcha">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+		<img src="/captcha" alt="captcha">
+	</body>
+</html>

@@ -10,11 +10,15 @@ const Modify = require('./service/modify');
 const GetInviteCode = require('./service/getInviteCode');
 const JoinIn = require('./service/joinIn');
 const Kick = require('./service/kick');
+const CreateChannel = require('./service/createChannel');
+const GetUsers = require('./service/getUsersInGroup');
 
 const services = {
 	captcha: captcha,
+	createChannel: CreateChannel,
 	createGroup: CreateGroup,
 	getInviteCode: GetInviteCode,
+	getUsers: GetUsers,
 	index: Index,
 	joinIn: JoinIn,
 	kick: Kick,

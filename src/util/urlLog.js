@@ -3,7 +3,11 @@
 const url = require('url');
 
 const log = require('../logger');
-
+/**
+ *
+ *
+ * @param {Request} req
+ */
 const commonLog = (req) => {
 	log.debug(`received request ${req.rawHeaders}`);
 	log.debug(` from client ${JSON.stringify(req.headers)}.`);

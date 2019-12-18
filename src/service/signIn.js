@@ -2,7 +2,6 @@
 
 const crypto = require('crypto');
 const Sequelize = require('sequelize');
-const url = require('url');
 
 const Op = Sequelize.Op;
 
@@ -37,14 +36,7 @@ const SignIn = (req, res) => {
 		return;
 	}
 	// 解析请求
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	const params = req.para;
 	const nickname = params.nickname || null;
 	const emailAddr = params.emailAddr || null;
 	const passwordHash = params.passwordHash || null;

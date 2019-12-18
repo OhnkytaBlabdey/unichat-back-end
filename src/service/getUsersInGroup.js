@@ -1,8 +1,9 @@
 'use-strict';
 
-const url = require('url');
 
+const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
+const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UIG = require('../db/po/user_in_group_model');
@@ -26,19 +27,8 @@ const UIG = require('../db/po/user_in_group_model');
  */
 const getUsers = (req, res) => {
 	log.debug('get users in group requested.');
-	if (!req.session.isvalid) {
-		sendMsg(res, Status.UNAUTHORIZED,
-			'您没有登录');
-		return;
-	}
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
 	const gid = params.gid || null;
 	UIG.findAll({
 		attributes: ['user_id'],
@@ -47,19 +37,13 @@ const getUsers = (req, res) => {
 		}
 	}).then((uigs) => {
 		log.debug('found users in group');
-		res.send({
-			status: Status.OK,
+		sendMsg(res, Status.OK, null, null, {
 			users: uigs.map((uig) => {
 				return uig.user_id;
 			})
 		});
 	}).catch((err) => {
-		if (err) {
-			log.warn(err);
-			res.status(500);
-			sendMsg(res, Status.FAILED,
-				'内部错误', 'internal error');
-		}
+		errorHandler(res, err, 'get users');
 	});
 };
 

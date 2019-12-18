@@ -5,7 +5,9 @@ const Sequelize = require('sequelize');
 
 const Op = Sequelize.Op;
 
+const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
+const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const User = require('../db/po/user_model');
@@ -30,15 +32,12 @@ const User = require('../db/po/user_model');
  */
 const SignIn = (req, res) => {
 	// 验证码限制
-	if (!req.session.captcha) {
-		sendMsg(res, Status.UNAUTHORIZED,
-			'请先获取验证码', 'invalid captcha');
-		return;
-	}
+	if (!loginHandler(req, res)) return;
 	// 解析请求
 	const params = req.para;
 	const nickname = params.nickname || null;
 	const emailAddr = params.emailAddr || null;
+	const uid = params.uid || null;
 	const passwordHash = params.passwordHash || null;
 	const captcha = params.captcha || null;
 	// log.info('req', req);
@@ -54,11 +53,11 @@ const SignIn = (req, res) => {
 	req.session.captcha = null;
 	if (
 		!passwordHash ||
-		!(emailAddr || nickname)
+		!(emailAddr || nickname || uid)
 	) {
 		log.debug('invalid request for signin');
 		sendMsg(res, Status.FAILED,
-			'请输入完整的用户名/邮箱 和 密码', 'param needed');
+			'请输入完整的用户名/邮箱/用户ID 和 密码', 'param needed');
 		return;
 	}
 	// 查询
@@ -69,18 +68,15 @@ const SignIn = (req, res) => {
 				},
 				{
 					email_addr: emailAddr
+				},
+				{
+					uid: uid
 				}
 			]
 			// password_hash: passwordHash
 		}
 	}).catch((err) => {
-		if (err) {
-			log.warn(err);
-			res.status(500);
-			sendMsg(res, Status.FAILED,
-				'内部错误', 'internal error');
-			return;
-		}
+		errorHandler(res, err, 'signin 1');
 	}).then((user) => {
 		if (user) {
 			const sha256 = crypto.createHash('sha256');

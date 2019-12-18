@@ -1,8 +1,8 @@
 'use-strict';
 
 const crypto = require('crypto');
-const url = require('url');
 
+const errorHandler = require('../util/handleInternalError');
 const getId = require('../util/uidGen');
 const log = require('../logger');
 const sendMsg = require('../util/sendMsg');
@@ -42,14 +42,7 @@ const defaultAvatars = [
  */
 const SignUp = (req, res) => {
 	// 解析请求
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	const params = req.para;
 	log.info(`\nsignup request ${JSON.stringify(params)}`);
 	const nickname = params.nickname;
 	const password = params.password;
@@ -82,12 +75,7 @@ const SignUp = (req, res) => {
 			nickname: nickname
 		}
 	}).catch((err) => {
-		if (err) {
-			log.error('when checking duplicated username', err);
-			res.status(500);
-			sendMsg(res, Status.FAILED, '内部错误', 'internal error');
-			return;
-		}
+		errorHandler(res, err, 'checking duplicated username');
 	}).then((ct) => {
 		if (ct) {
 			log.info(`nickname [${nickname}] has been taken.`);
@@ -96,12 +84,7 @@ const SignUp = (req, res) => {
 				`nickname [${nickname}] has been taken.`);
 		} else {
 			User.max('id').catch((err) => {
-				if (err) {
-					log.warn(err);
-					res.status(500);
-					sendMsg(res, Status.FAILED, 'internal error');
-					return;
-				}
+				errorHandler(res, err, 'signup 2');
 			}).then((maxid) => {
 				if (!maxid) maxid = 0;
 				const uid = getId(maxid);
@@ -117,18 +100,13 @@ const SignUp = (req, res) => {
 					uid: uid
 				}).catch((err) => {
 					if (err) {
-						log.warn(err);
-					} else {
-						return;
-					}
-					if (err.name === 'SequelizeValidationError') {
-						sendMsg(res, Status.FAILED,
-							'您的注册信息不符合要求',
-							'ValidationError', err.errors);
-					} else {
-						res.status(500);
-						sendMsg(res, Status.FAILED,
-							'内部错误', 'internal error');
+						if (err.name === 'SequelizeValidationError') {
+							sendMsg(res, Status.FAILED,
+								'您的注册信息不符合要求',
+								'ValidationError', err.errors);
+						} else {
+							errorHandler(res, err, 'signup 2');
+						}
 					}
 				}).then(user => {
 					log.info('user signed up successfully.', user);

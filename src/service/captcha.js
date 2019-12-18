@@ -47,7 +47,9 @@ const Captcha = async (req, res) => {
 			.status(200)
 			.send(captcha.data);
 	} else {
-		const captcha = await trekCaptcha();
+		const captcha = await trekCaptcha({
+			size: 2
+		});
 		req.session.captcha = captcha.token;
 		log.debug(req.session);
 		log.debug('captcha generated:', captcha.token);

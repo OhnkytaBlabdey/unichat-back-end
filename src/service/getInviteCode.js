@@ -2,10 +2,11 @@
 
 const moment = require('moment');
 const stringRandom = require('string-random');
-const url = require('url');
 
+const errorHandler = require('../util/handleInternalError');
 const Group = require('../db/po/group_model');
 const log = require('../logger');
+const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const UserInGroup = require('../db/po/user_in_group_model');
@@ -26,20 +27,9 @@ const UserInGroup = require('../db/po/user_in_group_model');
  * @returns
  */
 const GetInviteCode = (req, res) => {
-	if (!req.session.isvalid) {
-		sendMsg(res, Status.UNAUTHORIZED,
-			'您没有登录');
-		return;
-	}
+	if (!loginHandler(req, res)) return;
 	const uid = req.session.user.uid;
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	const params = req.para;
 	const gid = params.gid || null;
 
 	UserInGroup.count({
@@ -48,13 +38,7 @@ const GetInviteCode = (req, res) => {
 			user_id: uid
 		}
 	}).catch((err) => {
-		if (err) {
-			log.warn(err);
-			res.status(500);
-			sendMsg(res, Status.FAILED,
-				'内部错误', 'internal error');
-			return;
-		}
+		errorHandler(res, err, 'get invite code 1');
 	}).then((ct) => {
 		if (!ct) {
 			sendMsg(res, Status.UNAUTHORIZED,
@@ -67,18 +51,10 @@ const GetInviteCode = (req, res) => {
 				gid: gid
 			}
 		}).catch((err) => {
-			if (err) {
-				log.warn(err);
-				res.status(500);
-				sendMsg(res, Status.FAILED,
-					'内部错误', 'internal error');
-				return;
-			}
+			errorHandler(res, err, 'get invite code 2');
 		}).then((group) => {
 			if (!group) {
-				res.status(500);
-				sendMsg(res, Status.FAILED,
-					'内部错误', 'internal error');
+				errorHandler(res, Error('unknown'), 'get invite code 3');
 				return;
 			}
 			log.info('需要产生邀请的群聊', group.dataValues);
@@ -100,19 +76,14 @@ const GetInviteCode = (req, res) => {
 					}
 				}).catch((err) => {
 					if (!err) return;
-					log.warn(err);
-					res.status(500);
-					sendMsg(res, Status.FAILED,
-						'内部错误', 'internal error');
+					errorHandler(res, err, 'get invite code 4');
 				}).then((matched) => {
 					if (matched) {
 						sendMsg(res, Status.OK, null, null, {
 							inviteCode: code
 						});
 					} else {
-						res.status(500);
-						sendMsg(res, Status.FAILED,
-							'内部错误', 'internal error');
+						errorHandler(res, Error('unknown'), 'get invite code 5');
 						return;
 					}
 				});
@@ -124,13 +95,7 @@ const GetInviteCode = (req, res) => {
 				});
 			}
 		}).catch((err) => {
-			if (err) {
-				log.warn(err);
-				res.status(500);
-				sendMsg(res, Status.FAILED,
-					'内部错误', 'internal error');
-				return;
-			}
+			errorHandler(res, err, 'get invite code 6');
 		});
 	});
 };

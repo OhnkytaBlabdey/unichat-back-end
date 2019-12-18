@@ -7,13 +7,15 @@ var adaro = require('adaro');
 // var usersRouter = require('./routes/users');
 // var indexRouter = require('./routes/index');
 
-const appRouter = require('./src/router');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
-const urlLog = require('./src/util/urlLog');
+const session = require('express-session');
+
+const appRouter = require('./src/router');
 const Limit = require('./src/util/frequecyLimit');
 const login = require('./routes/login');
+const paramParse = require('./src/util/handleParams');
+const urlLog = require('./src/util/urlLog');
 
 var app = express();
 
@@ -46,7 +48,7 @@ app
 	}))
 	// icon
 	.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
-
+	.use(express.static(path.join(__dirname, 'public')))
 	// 限制频率
 	.use(Limit);
 app.use(bodyParser.json());
@@ -59,7 +61,8 @@ app.use((req, res, next) => {
 	urlLog(req);
 	next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(paramParse);
+
 // 应用路由
 app.use('/', appRouter);
 app.use('/login', login);

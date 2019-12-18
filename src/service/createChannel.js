@@ -1,10 +1,10 @@
 'use-strict';
 
-const url = require('url');
-
 const Channel = require('../db/po/channel_model');
 const CIG = require('../db/po/channel_in_group_model');
+const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
+const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 //=======================================================================================================================
@@ -25,19 +25,8 @@ const Status = require('../status');
  */
 const createChannel = (req, res) => {
 	log.debug('create channel requested.');
-	if (!req.session.isvalid) {
-		sendMsg(res, Status.UNAUTHORIZED,
-			'您没有登录');
-		return;
-	}
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
 	const channelName = params.channelName || null;
 	const channelStrategy = params.channelStrategy || null;
 	const gid = params.gid || null;
@@ -53,20 +42,10 @@ const createChannel = (req, res) => {
 			log.debug('created', cig);
 			sendMsg(res, Status.OK, '创建成功');
 		}).catch((err) => {
-			if (err) {
-				log.warn(err);
-				res.status(500);
-				sendMsg(res, Status.FAILED,
-					'内部错误', 'internal error');
-			}
+			errorHandler(res, err, 'create channel 1');
 		});
 	}).catch((err) => {
-		if (err) {
-			log.warn(err);
-			res.send({
-				status: Status.FAILED
-			});
-		}
+		errorHandler(res, err, 'create channel 2');
 	});
 };
 

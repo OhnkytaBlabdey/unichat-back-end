@@ -1,8 +1,18 @@
 'use-strict';
 
-const log = require('../logger');
-const Status = require('../status');
+const url = require('url');
 
+const log = require('../logger');
+const sendMsg = require('./sendMsg');
+const Status = require('../status');
+/**
+ *
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
+ * @returns
+ */
 const Limit = (req, res, next) => {
 	let frequency = 0;
 	if (req.session.isvalid) {
@@ -11,19 +21,20 @@ const Limit = (req, res, next) => {
 		frequency = 1000 * 1;
 	}
 
-	let lastAccess = new Date();
-	if (req.session.lastAccess && (lastAccess.getTime() - req.session.lastAccess) < frequency) {
-		req.session.lastAccess = lastAccess.getTime();
-		res.send({
-			desc: 'you access this app too frequently',
-			msg: 'だが断る',
-			status: Status.FAILED
-		});
-		return;
-	} else if (req.session.lastAccess) {
-		log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.lastAccess}`);
+	if (!req.session.limit) {
+		req.session.limit = {};
 	}
-	req.session.lastAccess = lastAccess.getTime();
+	const path = url.parse(req.url, true).pathname;
+	const lastAccess = new Date();
+	if (req.session.limit[path] && (lastAccess.getTime() - req.session.limit[path]) < frequency) {
+		req.session.limit[path] = lastAccess.getTime();
+		sendMsg(res, Status.FAILED,
+			'だが断る', 'you access this app too frequently');
+		return;
+	} else if (req.session.limit[path]) {
+		log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.limit[path]}`);
+	}
+	req.session.limit[path] = lastAccess.getTime();
 	next();
 };
 

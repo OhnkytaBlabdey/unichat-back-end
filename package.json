@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"apply": "node ./src/db/po/apply_model.js | .\\node_modules\\.bin\\bunyan",
-		"start": "node_modules/.bin/cross-env NODE_ENV=production PORT=10010 node ./bin/www | .\\node_modules\\.bin\\bunyan",
+		"start": "node_modules/.bin/cross-env NODE_ENV=production PORT=10086 node ./bin/www | .\\node_modules\\.bin\\bunyan",
 		"test": "node ./src/test.js | .\\node_modules\\.bin\\bunyan"
 	},
 	"keywords": [

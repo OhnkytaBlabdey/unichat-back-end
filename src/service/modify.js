@@ -1,8 +1,9 @@
 'use-strict';
 
-const url = require('url');
 
+const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
+const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const User = require('../db/po/user_model');
@@ -26,18 +27,8 @@ const User = require('../db/po/user_model');
  */
 
 const Modify = (req, res) => {
-	if (!req.session.isvalid || !req.session.user) {
-		sendMsg(res, Status.UNAUTHORIZED,
-			'您没有登录', 'you have not yet signed in', 'だが断る');
-	}
-	let params = null;
-	log.info(req.method);
-	if (req.method === 'GET') {
-		params = url.parse(req.url, true).query;
-	}
-	if (req.method === 'POST') {
-		params = req.body;
-	}
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
 	const colName = params.colName;
 	const newVal = params.newVal;
 	// 只能修改 【昵称 邮箱地址 头像】
@@ -57,11 +48,7 @@ const Modify = (req, res) => {
 				id: req.session.user.id
 			}
 		}).catch((err) => {
-			if (!err) return;
-			log.warn(err);
-			res.status(500);
-			sendMsg(res, Status.FAILED,
-				'内部错误', 'internal error');
+			errorHandler(res, err, 'modify');
 		}).then((matched) => {
 			log.info(`matched user: ${matched}`);
 			sendMsg(res, Status.OK,

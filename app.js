@@ -4,8 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var adaro = require('adaro');
-// var usersRouter = require('./routes/users');
-// var indexRouter = require('./routes/index');
 
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
@@ -38,9 +36,9 @@ app
 	// session
 	.use(session({
 		cookie: {
-			// secure: true,
-			// httpOnly: true,
-			maxAge: 1000 * 60 * 60 * 24 * 30 * 2 // 2 months
+			httpOnly: true,
+			maxAge: 1000 * 60 * 60 * 24 * 30 * 2, // 2 months
+			secure: true
 		},
 		resave: true,
 		saveUninitialized: false,
@@ -66,8 +64,6 @@ app.use(paramParse);
 // 应用路由
 app.use('/', appRouter);
 app.use('/login', login);
-// app.use('/index', indexRouter);
-// app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {

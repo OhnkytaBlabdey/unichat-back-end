@@ -2,103 +2,115 @@
 
 database API for `unichat`
 
-## 接口说明
-
 ### 服务器主机 [http://47.102.140.37:10010/](http://47.102.140.37:10010/)
 
--   用户注册 `POST`
+## 文档
 
-    PATH `/signup`
+### 请在 Release 下载
 
-    参数列表
+### 或者通过 `npm i -g jsdoc && npm run doc` 生成
 
-    -   昵称 `nickname`
-    -   密码 `password`
-    -   邮箱地址 `emailAddr`
-    -   签名档 `profile`
-        -   可以为空
-    -   验证码 `captcha`
+## 后台返回 JSON 的约定
 
--   获取验证码 `GET`
+    -   status
 
-    PATH `/captcha`
+        3 种
 
-    参数列表
+        -   `OK`
+        -   `FAILED`
+        -   `UNAUTHORIZED`
 
-    -   无
+    -   msg
 
-    备注：验证码的文本存储在该请求的 session 中
+        用于给用户看的文字
 
--   用户登录 `POST`
+    -   err
 
-    PATH `/signin`
+        报错详细信息，不给用户显示的
 
-    参数列表
+    -   dat
 
-    -   昵称 `nickname`
-    -   邮箱地址 `emailAddr`
-    -   hash(hash(password) 连接 captcha) `passwordHash`
-    -   验证码 `captcha`
+        查询返回的数据对象，看情况处理
 
-    备注
+## 相关链接
 
-    -   用户的昵称和邮箱地址不能都为空
-    -   密码的 hash 算法使用 SHA256
-    -   用户登录有效时间为 2 个月
+-   [后台](https://github.com/OhnkytaBlabdey/unichat-back-end)
+-   [前台](https://github.com/NeWive/UniChatFrontEnd)
 
--   用户修改属性 `GET POST`
+## TODO:
 
-    PATH `/modify`
+-   调用接口的**认证**方式
+    -   ~~session 中存储，交给 express 处理过期等问题~~
+-   ~~确定编码规范~~
+    -   ~~代码：驼峰命名~~
+    -   ~~数据库中的字段：下划线命名~~
+    -   ~~文件：驼峰命名~~
+-   确定接口包括哪些业务
+-   编写测试
 
-    参数列表
+1.  用户
 
-    -   字段名 `colName`
-    -   新赋值 `newVal`
+    -   ~~用户注册~~
+        -   ~~验证码~~
+            ~~SVG Captcha~~
+        -   ~~用户显示 ID 的生成~~
+    -   ~~用户登录~~
+    -   ~~查询用户信息~~
+    -   用户其他方式认证
+    -   ~~用户改属性~~
 
-    备注
+        -   ~~昵称~~
+        -   ~~邮箱~~
+        -   ~~头像通过信任的第三方存图，把新的 URL 告诉后台~~
 
-    -   可用的字段名如下
-        -   昵称 `nickname`
-        -   邮箱地址 `emailAddr`
-        -   签名档 `profile`
-        -   新头像的 URL `avatar`
-    -   必须在期限内登录过的用户才可以使用这个接口
+            目前白名单的模式需要为
 
--   用户创建群聊 `GET POST`
+            [ https://i.loli.net/* ]之一
 
-    PATH `/createGroup`
+2.  群
+    -   ~~用户创建群~~
+    -   用户为群改名
+    -   ~~（群内用户）分享群聊~~
+        -   ~~注：一定时间内的邀请码是不变的~~
+    -   ~~**用户加入群**~~
+    -   ~~用户退出群~~
+    -   ~~查询群里所有用户~~
+    -   查询用户是否在群里
+3.  频道
+    -   ~~用户在群里创建频道~~
+    -   查询群里所有聊天频道
+    -   用户为聊天频道改名
+4.  消息
 
-    参数列表
+    -   用户发给另一个用户消息
+    -   查询用户发的消息
+    -   查询用户收的消息
 
-    -   群聊名称 `name`
-    -   群聊图标 `logo`
+**待添加**
 
-    备注
+-   数据对象持久化
 
-    -   必须登录过的用户才可以使用
+-   ~~代码自动部署~~
+-   ~~文档持续集成~~
+-   ~~限制访问流量~~
 
--   用户获取邀请码 `GET POST`
-    PATH `/getInviteCode`
+## Usage
 
-    参数列表
+### config database password before run
 
-    -   群聊可见的 ID `gid`
+create `src\db\config.json` and save the password of database in the file.
 
-    备注
+-   npm start
 
-    -   登录过的用户
-    -   用户是这个群的成员
+    开启服务器
 
--   用户加入群聊 `GET POST`
-    PATH `/joinIn`
+-   npm test
 
-    参数列表
+    运行测试
 
-    -   邀请码 `inviteCode`
+-   npm run apply
 
-    备注
-
-    -   登录过的用户
+    把数据模型的字段更新到对应的表中，并**删除**之前的旧数据表
 
 ## 文件说明
 
@@ -130,18 +142,6 @@ database API for `unichat`
 
         版本控制工具忽略的文件
 
-    -   certificate.pem
-
-        SSL 认证
-
-    -   certrequest.csr
-
-        CA
-
-    -   privatekey.pem
-
-        SSL 密钥
-
     -   \*.code-workspace
 
         vscode 的工作空间
@@ -155,101 +155,3 @@ database API for `unichat`
     -   README.md
 
         此说明文件
-
--   后台返回 JSON 的约定
-
-    -   status
-
-        3 种
-
-        -   `OK`
-        -   `FAILED`
-        -   `UNAUTHORIZED`
-
-    -   msg
-
-        用于给用户看的文字
-
-    -   err
-
-        报错详细信息，不给用户显示的
-
-    -   dat
-
-        查询返回的数据对象，看情况处理
-
-## TODO:
-
--   调用接口的**认证**方式
-    -   session 中存储，交给 express 处理过期等问题
--   确定编码规范
-    -   代码：驼峰命名
-    -   字段：下划线命名
-    -   文件：驼峰命名
--   确定接口包括哪些业务
-
-1.  用户
-
-    -   ~~用户注册~~
-        -   ~~验证码~~
-            ~~SVG Captcha~~
-        -   ~~用户显示 ID 的生成~~
-    -   ~~用户登录~~
-    -   用户其他方式认证
-    -   ~~用户改属性~~
-
-        -   ~~昵称~~
-        -   ~~邮箱~~
-        -   ~~头像第三方存图，把新的 URL 告诉后台~~
-
-            模式需要为
-
-            [ https://i.loli.net/* ]之一
-
-2.  群
-    -   ~~用户创建群~~
-    -   用户为群改名
-    -   ~~（群内用户）分享群聊~~
-        -   ~~注：一定时间内的邀请码是不变的~~
-    -   ~~**用户加入群**~~
-    -   ~~用户退出群~~
-    -   ~~查询群里所有用户~~
-        -   查询用户是否在群里
-3.  频道
-    -   ~~用户在群里创建频道~~
-    -   查询群里所有聊天频道
-    -   用户为聊天频道改名
-4.  消息
-
-    -   用户发给另一个用户消息
-    -   查询用户发的消息
-    -   查询用户收的消息
-
-**待添加**
-
--   数据对象持久化
-
--   ~~自动部署~~
-
-## Usage
-
-### config database password before run
-
-create `src\db\config.json` and save the password of database in the file.
-
--   npm start
-
-    开启服务器
-
--   npm test
-
-    运行测试
-
--   npm run apply
-
-    把数据模型的字段更新到对应的表中，并**删除**之前的旧数据表
-
-## 相关链接
-
--   [后台](https://github.com/OhnkytaBlabdey/unichat-back-end)
--   [前台](https://github.com/NeWive/UniChatFrontEnd)

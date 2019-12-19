@@ -21,7 +21,7 @@ const Status = require('../status');
  * @public
  * @param {Request} req
  * @param {Response} res
- * @param {String[4-20]} channelName 频道名称
+ * @param {String4-20} channelName 频道名称
  * @param {admin_only|free_to_chat|bot_only} channelStrategy 频道发言策略
  * @param {Number} gid 群聊ID
  * @returns {OK|FAILED|UNAUTHORIZED} status

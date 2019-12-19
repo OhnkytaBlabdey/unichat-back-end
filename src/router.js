@@ -44,6 +44,8 @@ Router
 	.post('/joinIn', services.joinIn)
 	.get('/kick', services.kick)
 	.post('/kick', services.kick)
+	.get('/isInGroup', services.userIsInGroup)
+	.post('/isInGroup', services.userIsInGroup)
 	//==================================================================
 	//                                                                  
 	//   ####  ##   ##    ###    ##     ##  ##     ##  #####  ##      

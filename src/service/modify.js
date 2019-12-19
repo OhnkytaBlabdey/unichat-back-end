@@ -22,16 +22,17 @@ const User = require('../db/po/user_model');
  * 前提：用户已经登录
  * 前提：修改后的字段符合约束
  * 结果：修改该用户在库里的记录
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  * @param {Request} req
  * @param {Response} res
+ * @param {avatar|emailAddr|nickname|profile} colName 要修改的属性
+ * @param {String} newVal 修改后的新值
+ * @returns {OK|FAILED|UNAUTHORIZED} status
+ * @returns {Map} {k,v} 一个键值对，修改成功的结果
  */
-
-const Modify = (req, res) => {
-	if (!loginHandler(req, res)) return;
-	const params = req.para;
-	const colName = params.colName;
-	const newVal = params.newVal;
-	// 只能修改 【昵称 邮箱地址 头像】
+const handleModify = (req, res, colName, newVal) => {
+	// 只能修改 【昵称 邮箱地址 头像、签名档】
 	const availableCols = {
 		avatar: 'avatar',
 		emailAddr: 'email_addr',
@@ -55,6 +56,23 @@ const Modify = (req, res) => {
 				'修改成功', null, kv);
 		});
 	}
+};
+/**
+ * 用户修改自己的属性
+ * 前提：用户已经登录
+ * 前提：修改后的字段符合约束
+ * 结果：修改该用户在库里的记录
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+
+const Modify = (req, res) => {
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
+	const colName = params.colName;
+	const newVal = params.newVal;
+	handleModify(req, res, colName, newVal);
 };
 
 module.exports = Modify;

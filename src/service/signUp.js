@@ -35,21 +35,22 @@ const defaultAvatars = [
  * 用户注册
  * 前提：用户输入正确的字段信息，符合约束，验证码正确
  * 结果：在库里添加用户记录，告诉用户注册成功，以及分配的uid
- *
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  * @param {Request} req
  * @param {Response} res
- * @returns
+ * @param {String} nickname 用户昵称
+ * @param {String} password 用户密码（明文）
+ * @param {email} emailAddr 用户邮箱
+ * @param {String|null} profile 用户签名档【缺省】
+ * @param {String|null} avatar 用户头像【缺省】
+ * @param {String} captcha 验证码
+ * @returns {OK|FAILED|UNAUTHORIZED} status
+ * @returns {URL} avatar 头像
+ * @returns {String} nickname 昵称
+ * @returns {Number} uid 用户ID
  */
-const SignUp = (req, res) => {
-	// 解析请求
-	const params = req.para;
-	log.info(`\nsignup request ${JSON.stringify(params)}`);
-	const nickname = params.nickname;
-	const password = params.password;
-	const emailAddr = params.emailAddr;
-	const profile = params.profile;
-	const avatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
-	const captcha = params.captcha;
+const handleSignUp = (req, res, nickname, password, emailAddr, profile, avatar, captcha) => {
 	if (!req.session.captcha ||
 		!captcha ||
 		captcha != req.session.captcha
@@ -119,6 +120,27 @@ const SignUp = (req, res) => {
 			});
 		}
 	});
+};
+
+/**
+ * 用户注册
+ * 前提：用户输入正确的字段信息，符合约束，验证码正确
+ * 结果：在库里添加用户记录，告诉用户注册成功，以及分配的uid
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+const SignUp = (req, res) => {
+	// 解析请求
+	const params = req.para;
+	log.info(`\nsignup request ${JSON.stringify(params)}`);
+	const nickname = params.nickname;
+	const password = params.password;
+	const emailAddr = params.emailAddr;
+	const profile = params.profile;
+	const avatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
+	const captcha = params.captcha;
+	handleSignUp(req, res, nickname, password, emailAddr, profile, avatar, captcha);
 };
 
 module.exports = SignUp;

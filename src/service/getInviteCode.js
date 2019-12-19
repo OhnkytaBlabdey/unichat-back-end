@@ -20,18 +20,17 @@ const UserInGroup = require('../db/po/user_in_group_model');
 //                                                                                                            
 //============================================================================================================
 /**
- *
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  *
  * @param {Request} req
  * @param {Response} res
- * @returns
+ * @param {Number} gid
+ * @returns {OK|FAILED|UNAUTHORIZED} status
+ * @returns {String} inviteCode
  */
-const GetInviteCode = (req, res) => {
-	if (!loginHandler(req, res)) return;
+const handleGetInviteCode = (req, res, gid) => {
 	const uid = req.session.user.uid;
-	const params = req.para;
-	const gid = params.gid || null;
-
 	UserInGroup.count({
 		where: {
 			group_id: gid,
@@ -98,6 +97,17 @@ const GetInviteCode = (req, res) => {
 			errorHandler(res, err, 'get invite code 6');
 		});
 	});
+};
+/**
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+const GetInviteCode = (req, res) => {
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
+	const gid = params.gid || null;
+	handleGetInviteCode(req, res, gid);
 };
 
 module.exports = GetInviteCode;

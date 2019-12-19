@@ -1,0 +1,49 @@
+'use-strict';
+
+
+const loginHandler = require('../util/handleLogin');
+const errorHandler = require('../util/handleInternalError');
+const sendMsg = require('../util/sendMsg');
+const Status = require('../status');
+const User = require('../db/po/user_model');
+/**
+ * 查询用户的头像、昵称、签名档
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
+ * @param {Request} req 请求
+ * @param {Response} res 响应
+ * @param {Number} uid 用户ID
+ * @returns {OK|FAILED|UNAUTHORIZED} status
+ * @returns {URL} avatar 用户头像
+ * @returns {String} nickname 用户昵称
+ * @returns {String} profile 用户签名档
+ */
+const handleUserInfo = (req, res, uid) => {
+	User.findOne({
+		attributes: [
+			'avatar',
+			'nickname',
+			'profile'
+		],
+		where: {
+			uid: uid
+		}
+	}).then((user) => {
+		if (user) {
+			sendMsg(res, Status.OK, null, null, user);
+		} else {
+			sendMsg(res, Status.FAILED, '未找到用户');
+		}
+	}).catch((err) => {
+		errorHandler(res, err, 'user info');
+	});
+};
+
+const UserInfo = (req, res) => {
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
+	const uid = params.uid || null;
+	handleUserInfo(req, res, uid);
+};
+
+module.exports = UserInfo;

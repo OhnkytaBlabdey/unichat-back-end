@@ -1,0 +1,23 @@
+version: 1.0.{build}
+pull_requests:
+  do_not_increment_build_number: true
+environment:
+  nodejs_version: 12.12.0
+install:
+    - ps: Install-Product node $env:nodejs_version
+    - npm install
+    - npm install -g jsdoc
+    - npm run doc
+build:
+  verbosity: minimal
+after_build:
+- 7z a doc.7z doc
+artifacts:
+- path: doc.7z
+  name: document
+deploy:
+- provider: GitHub
+  description: 文档
+  auth_token:
+    secure: qF+7b9mWfsL/QujEuXXIjhOhxOzh6DAk+v5m3h5f6gFh2BzCj3sW62hCKAIrHYVa
+  artifact: document

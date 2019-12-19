@@ -1,18 +1,19 @@
 'use-strict';
 
 
-const signUp = require('./service/signUp');
 const captcha = require('./service/captcha');
+const CreateChannel = require('./service/createChannel');
 const CreateGroup = require('./service/createGroup');
-const SignIn = require('./service/signIn');
-const Index = require('./service/index');
-const Modify = require('./service/modify');
 const GetInviteCode = require('./service/getInviteCode');
+const GetUsers = require('./service/getUsersInGroup');
+const Index = require('./service/index');
 const JoinIn = require('./service/joinIn');
 const Kick = require('./service/kick');
-const CreateChannel = require('./service/createChannel');
-const GetUsers = require('./service/getUsersInGroup');
+const Modify = require('./service/modify');
+const SignIn = require('./service/signIn');
+const signUp = require('./service/signUp');
 const UserInfo = require('./service/userInfo');
+const UserIsInGroup = require('./service/userIsInGroup');
 
 const services = {
 	captcha: captcha,
@@ -26,7 +27,8 @@ const services = {
 	modify: Modify,
 	signin: SignIn,
 	signup: signUp,
-	userInfo: UserInfo
+	userInfo: UserInfo,
+	userIsInGroup: UserIsInGroup
 };
 
 module.exports = services;

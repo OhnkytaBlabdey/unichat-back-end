@@ -30,6 +30,7 @@ const getUsers = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
+	// TODO:如果用户不是该群成员，则拒绝查询
 	UIG.findAll({
 		attributes: ['user_id'],
 		where: {

@@ -12,6 +12,7 @@ const JoinIn = require('./service/joinIn');
 const Kick = require('./service/kick');
 const CreateChannel = require('./service/createChannel');
 const GetUsers = require('./service/getUsersInGroup');
+const UserInfo = require('./service/userInfo');
 
 const services = {
 	captcha: captcha,
@@ -24,7 +25,8 @@ const services = {
 	kick: Kick,
 	modify: Modify,
 	signin: SignIn,
-	signup: signUp
+	signup: signUp,
+	userInfo: UserInfo
 };
 
 module.exports = services;

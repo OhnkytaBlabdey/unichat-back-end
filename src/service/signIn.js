@@ -7,7 +7,6 @@ const Op = Sequelize.Op;
 
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
-const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 const User = require('../db/po/user_model');
@@ -31,8 +30,6 @@ const User = require('../db/po/user_model');
  * @returns
  */
 const SignIn = (req, res) => {
-	// 验证码限制
-	if (!loginHandler(req, res)) return;
 	// 解析请求
 	const params = req.para;
 	const nickname = params.nickname || null;
@@ -42,6 +39,7 @@ const SignIn = (req, res) => {
 	const captcha = params.captcha || null;
 	// log.info('req', req);
 	log.info('params', params);
+	// 验证码限制
 	if (captcha != req.session.captcha) {
 		log.debug(`wrong captcha ${captcha} ${req.session.captcha}`);
 		req.session.captcha = null;

@@ -4,3 +4,5 @@
 # /log
 # [config file]
 src/db/config.json
+# [doc file]
+doc

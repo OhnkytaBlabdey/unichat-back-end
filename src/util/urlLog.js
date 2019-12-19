@@ -20,7 +20,7 @@ const commonLog = (req) => {
 	// 解析请求
 	const serv = {
 		params: query,
-		servName: pathname
+		serviceName: pathname
 	};
 	log.info(`requested for service :${JSON.stringify(serv)}`);
 	log.info('request body', req.body);

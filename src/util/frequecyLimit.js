@@ -11,7 +11,6 @@ const Status = require('../status');
  * @param {Request} req
  * @param {Response} res
  * @param {Function} next
- * @returns
  */
 const Limit = (req, res, next) => {
 	let frequency = 0;
@@ -32,7 +31,8 @@ const Limit = (req, res, next) => {
 			'だが断る', 'you access this app too frequently');
 		return;
 	} else if (req.session.limit[path]) {
-		log.debug(`访问的间隔 ${lastAccess.getTime() - req.session.limit[path]}`);
+		log.debug('访问的间隔');
+		log.debug(lastAccess.getTime() - req.session.limit[path]);
 	}
 	req.session.limit[path] = lastAccess.getTime();
 	next();

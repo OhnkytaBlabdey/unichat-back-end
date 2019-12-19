@@ -17,19 +17,16 @@ const Status = require('../status');
 //                                                                                                                       
 //=======================================================================================================================
 /**
- *
- *
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  * @param {Request} req
  * @param {Response} res
- * @returns
+ * @param {String[4-20]} channelName 频道名称
+ * @param {admin_only|free_to_chat|bot_only} channelStrategy 频道发言策略
+ * @param {Number} gid 群聊ID
+ * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const createChannel = (req, res) => {
-	log.debug('create channel requested.');
-	if (!loginHandler(req, res)) return;
-	const params = req.para;
-	const channelName = params.channelName || null;
-	const channelStrategy = params.channelStrategy || null;
-	const gid = params.gid || null;
+const handleCreateChannel = (req, res, channelName, channelStrategy, gid) => {
 	Channel.create({
 		name: channelName,
 		strategy: channelStrategy
@@ -47,6 +44,20 @@ const createChannel = (req, res) => {
 	}).catch((err) => {
 		errorHandler(res, err, 'create channel 2');
 	});
+};
+/**
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+const createChannel = (req, res) => {
+	log.debug('create channel requested.');
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
+	const channelName = params.channelName || null;
+	const channelStrategy = params.channelStrategy || null;
+	const gid = params.gid || null;
+	handleCreateChannel(req, res, channelName, channelStrategy, gid);
 };
 
 module.exports = createChannel;

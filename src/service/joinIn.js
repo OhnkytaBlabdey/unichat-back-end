@@ -17,19 +17,15 @@ const UIG = require('../db/po/user_in_group_model');
 //   ####    #####   ##  ##     ##  ##  ##     ##        
 //                                                         
 //=========================================================
-
 /**
- *
- *
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  * @param {Request} req
  * @param {Response} res
- * @returns
+ * @param {String} inviteCode 邀请码
+ * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const JoinIn = (req, res) => {
-	log.debug('join in requested.');
-	if (!loginHandler(req, res)) return;
-	const params = req.para;
-	const inviteCode = params.inviteCode;
+const handleJoinIn = (req, res, inviteCode) => {
 	Group.findOne({
 		attributes: ['gid'],
 		where: {
@@ -75,6 +71,20 @@ const JoinIn = (req, res) => {
 			errorHandler(res, err, 'count uig');
 		});
 	});
+};
+
+/**
+ *
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+const JoinIn = (req, res) => {
+	log.debug('join in requested.');
+	if (!loginHandler(req, res)) return;
+	const params = req.para;
+	const inviteCode = params.inviteCode;
+	handleJoinIn(req, res, inviteCode);
 };
 
 module.exports = JoinIn;

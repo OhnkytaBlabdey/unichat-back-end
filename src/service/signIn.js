@@ -19,28 +19,25 @@ const User = require('../db/po/user_model');
 //     ##  ##  ##   ##  ##    ###  ##  ##    ###  
 //  ####   ##   ####    ##     ##  ##  ##     ##  
 //                                                  
-//==================================================
 /**
  * 用户登录
  * 前提：用户在数据库内有注册记录
- * 前提：用户输入正确的用户名/邮箱地址、密码hash、验证码
+ * 前提：用户输入正确的用户名/邮箱地址/用户ID、密码hash、验证码
  * 结果：在session中保存用户的登录信息
+ * @author Ohnkyta <ohnkyta@163.com>
+ * @public
  * @param {Request} req
  * @param {Response} res
- * @returns
+ * @param {String} nickname
+ * @param {String} emailAddr
+ * @param {Number} uid
+ * @param {String} passwordHash
+ * @param {String} captcha
+ * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const SignIn = (req, res) => {
-	// 解析请求
-	const params = req.para;
-	const nickname = params.nickname || null;
-	const emailAddr = params.emailAddr || null;
-	const uid = params.uid || null;
-	const passwordHash = params.passwordHash || null;
-	const captcha = params.captcha || null;
-	// log.info('req', req);
-	log.info('params', params);
+const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha) => {
 	// 验证码限制
-	if (captcha != req.session.captcha) {
+	if (!req.session.captcha || captcha !== req.session.captcha) {
 		log.debug(`wrong captcha ${captcha} ${req.session.captcha}`);
 		req.session.captcha = null;
 		sendMsg(res, Status.UNAUTHORIZED,
@@ -96,5 +93,25 @@ const SignIn = (req, res) => {
 			return;
 		}
 	});
+};
+/**
+ * 用户登录
+ * 前提：用户在数据库内有注册记录
+ * 前提：用户输入正确的用户名/邮箱地址/用户ID、密码hash、验证码
+ * 结果：在session中保存用户的登录信息
+ * @private
+ * @param {Request} req
+ * @param {Response} res
+ */
+const SignIn = (req, res) => {
+	// 解析请求
+	const params = req.para;
+	const nickname = params.nickname || null;
+	const emailAddr = params.emailAddr || null;
+	const uid = params.uid || null;
+	const passwordHash = params.passwordHash || null;
+	const captcha = params.captcha || null;
+	// log.info('params', params);
+	handleSignIn(req, res, nickname, emailAddr, uid, passwordHash, captcha);
 };
 module.exports = SignIn;

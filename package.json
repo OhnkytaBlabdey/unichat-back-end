@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"apply": "node ./src/db/po/apply_model.js | .\\node_modules\\.bin\\bunyan",
+		"doc": "jsdoc src\\service\\ -d doc",
 		"restart": "node_modules/.bin/cross-env NODE_ENV=dev PORT=7890 pm2 restart unichat --update-env",
 		"start": "node_modules/.bin/cross-env NODE_ENV=dev PORT=7890 node ./bin/unichat | .\\node_modules\\.bin\\bunyan",
 		"test": "node ./src/test.js | .\\node_modules\\.bin\\bunyan"

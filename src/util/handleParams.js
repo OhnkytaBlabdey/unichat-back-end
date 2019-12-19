@@ -20,7 +20,7 @@ const HandleParams = (req, res, next) => {
 		res.status(405);
 		return;
 	}
-	log.info(req.para);
+	log.info('parameters', req.para);
 	next();
 };
 

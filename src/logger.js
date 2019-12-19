@@ -2,29 +2,29 @@
 const bunyan = require('bunyan');
 const process = require('process');
 const log = global.log = bunyan.createLogger({
-	name: 'unichat-dbm',
+	name: 'unichat-back-end',
 	time: new Date().toString(),
 	streams: [{
 		level: 'info',
 		stream: process.stdout // log INFO and above to stdout
 	}, {
+		count: 64, // keep copies
 		level: 'info',
-		type: 'rotating-file',
 		path: './log/info/infos.log',
 		period: '6h', // daily rotation : '1d'
-		count: 64 // keep copies
+		type: 'rotating-file'
 	}, {
+		count: 64,
 		level: 'debug',
-		type: 'rotating-file',
 		path: './log/debug/debug.log',
 		period: '8h',
-		count: 64
+		type: 'rotating-file'
 	}, {
+		count: 64,
 		level: 'warn',
-		type: 'rotating-file',
 		path: './log/warn/warn.log',
 		period: '1d',
-		count: 64
+		type: 'rotating-file'
 	}]
 });
 module.exports = log;

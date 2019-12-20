@@ -1,21 +1,56 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>{title}</title>
-		<link rel="stylesheet" href="/stylesheets/style.css" />
-	</head>
-	<body>
-		<h1>{title}</h1>
-		<div id="login">
-			<form action="/signin" method="post" target="_blank">
+
+<head>
+	<title>{title}</title>
+	<link rel="stylesheet" href="/stylesheets/style.css" />
+	<script src="/javascripts/sha256.min.js"></script>
+	<script src="/javascripts/jquery.js"></script>
+</head>
+
+<body>
+	<iframe name="reee" style="display: none;"></iframe>
+
+	<h1>{title}</h1>
+	<div id="login">
+		<form action="/signin" method="post" name="login" target="reee">
+			<table>
 				<input type="text" name="nickname" placeholder="nickname" /><br />
 				<input type="text" name="emailAddr" placeholder="emailAddr@qq.com" /><br />
 				<input type="text" name="passwordHash" placeholder="dddfd" /><br />
 				<input type="text" name="captcha" placeholder="asdfg" /><br />
 				<br />
-				<input type="submit" value="Submit" />
-			</form>
-		</div>
-		<img src="/captcha" alt="captcha" />
-	</body>
+				<button onclick="sub();">click</button>
+			</table>
+		</form>
+	</div>
+	<img src="/captcha" alt="captcha" />
+	<script>
+		'use-strict';
+		const sub = e => {
+			const pw = document.forms['login']['passwordHash']['value'];
+			const captcha = document.forms['login']['captcha']['value'];
+			const hashpw = sha256(pw);
+			console.log(hashpw);
+			const hash = sha256(hashpw + captcha);
+			console.log(hash);
+			$.ajax({
+				type: 'POST',
+				url: '/signin',
+				data: {
+					captcha: captcha,
+					emailAddr: document.forms['login']['emailAddr']['value'],
+					nickname: document.forms['login']['nickname']['value'],
+					passwordHash: hash
+				},
+				success: ((data, status, xhr) => {
+					console.log(data);
+					console.log(status);
+					/* console.log(xhr);*/
+				})
+			});
+		};
+	</script>
+</body>
+
 </html>

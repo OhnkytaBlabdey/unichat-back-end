@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{title}</title>
+		<link rel="stylesheet" href="/stylesheets/style.css" />
+	</head>
+	<body>
+		<form action="/signup" method="post">
+			<input type="text" name="nickname" placeholder="nickname" />
+			<input type="text" name="password" placeholder="password" />
+			<input type="text" name="emailAddr" placeholder="emailAddr" />
+			<input type="text" name="captcha" placeholder="captcha" />
+			<input type="submit" value="Sign Up!" />
+		</form>
+		<div>
+			<img src="/captcha" alt="captcha" />
+		</div>
+	</body>
+</html>

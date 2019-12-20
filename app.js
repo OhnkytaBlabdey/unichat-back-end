@@ -13,6 +13,7 @@ const appRouter = require('./src/router');
 const Limit = require('./src/util/frequecyLimit');
 const login = require('./routes/login');
 const paramParse = require('./src/util/handleParams');
+const register = require('./routes/register');
 const urlLog = require('./src/util/urlLog');
 
 var app = express();
@@ -63,6 +64,7 @@ app.use(paramParse);
 // 应用路由
 app.use('/', appRouter);
 app.use('/login', login);
+app.use('/register', register);
 
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {

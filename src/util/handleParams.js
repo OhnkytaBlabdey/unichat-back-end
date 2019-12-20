@@ -17,7 +17,7 @@ const HandleParams = (req, res, next) => {
 		req.para = req.body;
 	} else {
 		log.info('invalid method');
-		res.status(405);
+		// res.status(405);
 		return;
 	}
 	log.info('parameters', req.para);

@@ -13,7 +13,7 @@ const Status = require('../status');
 const Handler = (res, err, app = 'unknown') => {
 	if (err) {
 		log.warn(err, 'in app', app);
-		res.status(500);
+		// res.status(500);
 		sendMsg(res, Status.FAILED,
 			'内部错误', 'internal error');
 	}

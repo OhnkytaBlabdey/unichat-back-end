@@ -4,8 +4,7 @@ const connection = require('../config');
 const log = require('../../logger');
 const sequelize = require('sequelize');
 
-// const User = sequelize.define('user', {
-const User = connection.define('t_user', {
+const config = {
 	avatar: {
 		allowNull: false,
 		comment: '头像',
@@ -38,7 +37,7 @@ const User = connection.define('t_user', {
 	},
 	password_hash: {
 		allowNull: false,
-		comment: '密码：长度1- 20位，数字，大小写字母、可打印特殊字符、不允许中文',
+		comment: '这里存储的是密码的hash。密码：长度1- 20位，数字，大小写字母、可打印特殊字符、不允许中文',
 		type: sequelize.STRING,
 		validate: {
 			len: [32, 64],
@@ -48,7 +47,7 @@ const User = connection.define('t_user', {
 	profile: {
 		allowNull: false,
 		comment: '个人简介：最长50位',
-		default: '你还记得你放过多少鸽子🕊吗',
+		defaultValue: '你还记得你放过多少鸽子🕊吗',
 		type: sequelize.STRING,
 		validate: {
 			len: [1, 50],
@@ -64,8 +63,12 @@ const User = connection.define('t_user', {
 			notNull: true
 		}
 	}
-}, {
+};
+
+// const User = sequelize.define('user', {
+const User = connection.define('t_user', config, {
 	timestamp: true
 });
+log.info(config);
 log.info(User);
 module.exports = User;

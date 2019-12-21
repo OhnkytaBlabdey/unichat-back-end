@@ -50,13 +50,13 @@ const UserIsInGroupCB = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
-	if (!gid) {
+	if (!gid || !req.session.user) {
 		sendMsg(res, Status.FAILED, '缺少参数');
 	}
 	if (!req.session.joinedIn) {
 		req.session.joinedIn = [];
 	}
-	if (UserIsInGroup(gid)) {
+	if (UserIsInGroup(req, res, gid)) {
 		req.session.joinedIn.push(gid);
 	} else {
 		req.session.joinedIn.pop();

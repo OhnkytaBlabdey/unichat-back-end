@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 
 const Op = Sequelize.Op;
 
+const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
 const sendMsg = require('../util/sendMsg');
@@ -38,15 +39,8 @@ const User = require('../db/po/user_model');
  */
 const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha) => {
 	// 验证码限制
-	if (!req.session.captcha || captcha !== req.session.captcha) {
-		log.debug(`wrong captcha ${captcha} ${req.session.captcha}`);
-		req.session.captcha = null;
-		sendMsg(res, Status.UNAUTHORIZED,
-			'验证码错误', 'wrong captcha');
-		return;
-	}
-	log.debug('correct captcha');
-	req.session.captcha = null;
+	if (!captchaHandler(req, res)) return;
+
 	if (
 		!passwordHash ||
 		!(emailAddr || nickname || uid)

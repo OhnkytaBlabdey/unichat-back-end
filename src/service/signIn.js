@@ -26,6 +26,7 @@ const User = require('../db/po/user_model');
  * 结果：在session中保存用户的登录信息
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /signin
  * @param {Request} req
  * @param {Response} res
  * @param {String} nickname
@@ -103,7 +104,7 @@ const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha)
  * @param {Request} req
  * @param {Response} res
  */
-const SignIn = (req, res) => {
+const SignInCB = (req, res) => {
 	// 解析请求
 	const params = req.para;
 	const nickname = params.nickname || null;
@@ -114,4 +115,4 @@ const SignIn = (req, res) => {
 	// log.info('params', params);
 	handleSignIn(req, res, nickname, emailAddr, uid, passwordHash, captcha);
 };
-module.exports = SignIn;
+module.exports = SignInCB;

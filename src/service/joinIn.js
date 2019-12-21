@@ -20,12 +20,13 @@ const UIG = require('../db/po/user_in_group_model');
 /**
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /joinIn
  * @param {Request} req
  * @param {Response} res
  * @param {String} inviteCode 邀请码
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const handleJoinIn = (req, res, inviteCode) => {
+const JoinIn = (req, res, inviteCode) => {
 	Group.findOne({
 		attributes: ['gid'],
 		where: {
@@ -79,12 +80,12 @@ const handleJoinIn = (req, res, inviteCode) => {
  * @param {Request} req
  * @param {Response} res
  */
-const JoinIn = (req, res) => {
+const JoinInCB = (req, res) => {
 	log.debug('join in requested.');
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const inviteCode = params.inviteCode;
-	handleJoinIn(req, res, inviteCode);
+	JoinIn(req, res, inviteCode);
 };
 
-module.exports = JoinIn;
+module.exports = JoinInCB;

@@ -18,13 +18,14 @@ const UIG = require('../db/po/user_in_group_model');
  *
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /isInGroup
  * @param {Request} req
  * @param {Response} res
  * @param {Number} gid
  * @returns {OK|FAILED|UNAUTHORIZED} status
  * @returns {Boolean} dat 表示该登录的用户是否在群里
  */
-const handleUserIsInGroup = (req, res, gid) => {
+const UserIsInGroup = (req, res, gid) => {
 	const uid = req.session.user.uid;
 	UIG.count({
 		where: {
@@ -45,21 +46,21 @@ const handleUserIsInGroup = (req, res, gid) => {
 	});
 };
 
-const UserIsInGroup = (req, res) => {
+const UserIsInGroupCB = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
-	if (!gid) {
+	if (!gid || !req.session.user) {
 		sendMsg(res, Status.FAILED, '缺少参数');
 	}
 	if (!req.session.joinedIn) {
 		req.session.joinedIn = [];
 	}
-	if (handleUserIsInGroup(gid)) {
+	if (UserIsInGroup(req, res, gid)) {
 		req.session.joinedIn.push(gid);
 	} else {
 		req.session.joinedIn.pop();
 	}
 };
 
-module.exports = UserIsInGroup;
+module.exports = UserIsInGroupCB;

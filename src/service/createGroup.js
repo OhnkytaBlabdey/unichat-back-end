@@ -25,13 +25,14 @@ const UserInGroup = require('../db/po/user_in_group_model');
  * 结果：创建群聊记录，创建用户和群聊从属关系的记录，告诉用户分配的gid
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /createGroup
  * @param {Request} req
  * @param {Response} res
  * @param {String} name
  * @param {URL} logo
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const handleCreateGroup = (req, res, name, logo) => {
+const CreateGroup = (req, res, name, logo) => {
 	Group.max('id').catch((err) => {
 		if (err) {
 			errorHandler(res, err, 'create group 1');
@@ -86,12 +87,12 @@ const handleCreateGroup = (req, res, name, logo) => {
  * @param {Request} req
  * @param {Response} res
  */
-const CreateGroup = (req, res) => {
+const CreateGroupCB = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const name = params.name;
 	const logo = params.logo;
-	handleCreateGroup(req, res, name, logo);
+	CreateGroup(req, res, name, logo);
 };
 
-module.exports = CreateGroup;
+module.exports = CreateGroupCB;

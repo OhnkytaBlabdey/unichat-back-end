@@ -19,6 +19,7 @@ const Status = require('../status');
 /**
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /createChannel
  * @param {Request} req
  * @param {Response} res
  * @param {String4-20} channelName 频道名称
@@ -26,7 +27,7 @@ const Status = require('../status');
  * @param {Number} gid 群聊ID
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const handleCreateChannel = (req, res, channelName, channelStrategy, gid) => {
+const CreateChannel = (req, res, channelName, channelStrategy, gid) => {
 	Channel.create({
 		name: channelName,
 		strategy: channelStrategy
@@ -50,14 +51,14 @@ const handleCreateChannel = (req, res, channelName, channelStrategy, gid) => {
  * @param {Request} req
  * @param {Response} res
  */
-const createChannel = (req, res) => {
+const createChannelCB = (req, res) => {
 	log.debug('create channel requested.');
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const channelName = params.channelName || null;
 	const channelStrategy = params.channelStrategy || null;
 	const gid = params.gid || null;
-	handleCreateChannel(req, res, channelName, channelStrategy, gid);
+	CreateChannel(req, res, channelName, channelStrategy, gid);
 };
 
-module.exports = createChannel;
+module.exports = createChannelCB;

@@ -14,6 +14,7 @@ const Status = require('../status');
 /**
  * 根路径
  * 没啥用
+ * @example /
  * @param {Request} req
  * @param {Response} res
  */

@@ -37,6 +37,7 @@ const defaultAvatars = [
  * 结果：在库里添加用户记录，告诉用户注册成功，以及分配的uid
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /signup
  * @param {Request} req
  * @param {Response} res
  * @param {String} nickname 用户昵称
@@ -50,7 +51,7 @@ const defaultAvatars = [
  * @returns {String} nickname 昵称
  * @returns {Number} uid 用户ID
  */
-const handleSignUp = (req, res, nickname, password, emailAddr, profile, avatar, captcha) => {
+const SignUp = (req, res, nickname, password, emailAddr, profile, avatar, captcha) => {
 	if (!req.session.captcha ||
 		!captcha ||
 		captcha != req.session.captcha
@@ -130,7 +131,7 @@ const handleSignUp = (req, res, nickname, password, emailAddr, profile, avatar, 
  * @param {Request} req
  * @param {Response} res
  */
-const SignUp = (req, res) => {
+const SignUpCB = (req, res) => {
 	// 解析请求
 	const params = req.para;
 	log.info(`\nsignup request ${JSON.stringify(params)}`);
@@ -140,7 +141,7 @@ const SignUp = (req, res) => {
 	const profile = params.profile;
 	const avatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
 	const captcha = params.captcha;
-	handleSignUp(req, res, nickname, password, emailAddr, profile, avatar, captcha);
+	SignUp(req, res, nickname, password, emailAddr, profile, avatar, captcha);
 };
 
-module.exports = SignUp;
+module.exports = SignUpCB;

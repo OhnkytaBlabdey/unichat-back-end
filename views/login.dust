@@ -6,25 +6,6 @@
 	<link rel="stylesheet" href="/stylesheets/style.css" />
 	<script src="/javascripts/sha256.min.js"></script>
 	<script src="/javascripts/jquery.js"></script>
-</head>
-
-<body>
-	<iframe name="reee" style="display: none;"></iframe>
-
-	<h1>{title}</h1>
-	<div id="login">
-		<form action="/signin" method="post" name="login" target="reee">
-			<table>
-				<input type="text" name="nickname" placeholder="nickname" /><br />
-				<input type="text" name="emailAddr" placeholder="emailAddr@qq.com" /><br />
-				<input type="text" name="passwordHash" placeholder="dddfd" /><br />
-				<input type="text" name="captcha" placeholder="asdfg" /><br />
-				<br />
-				<button onclick="sub();">click</button>
-			</table>
-		</form>
-	</div>
-	<img src="/captcha" alt="captcha" />
 	<script>
 		'use-strict';
 		const sub = e => {
@@ -51,6 +32,24 @@
 			});
 		};
 	</script>
+</head>
+
+<body>
+	<iframe name="reee" style="display: none;"></iframe>
+	<h1>{title}</h1>
+	<div id="login">
+		<form action="/reee" method="post" name="login" target="reee">
+			<table>
+				<input type="text" name="nickname" placeholder="nickname" /><br />
+				<input type="text" name="emailAddr" placeholder="emailAddr@qq.com" /><br />
+				<input type="text" name="passwordHash" placeholder="dddfd" /><br />
+				<input type="text" name="captcha" placeholder="asdfg" /><br />
+				<br />
+				<button onclick="sub();">click</button>
+			</table>
+		</form>
+	</div>
+	<img src="/captcha" alt="captcha" />
 </body>
 
 </html>

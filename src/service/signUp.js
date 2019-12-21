@@ -2,6 +2,7 @@
 
 const crypto = require('crypto');
 
+const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
 const getId = require('../util/uidGen');
 const log = require('../logger');
@@ -52,20 +53,7 @@ const defaultAvatars = [
  * @returns {Number} uid 用户ID
  */
 const SignUp = (req, res, nickname, password, emailAddr, profile, avatar, captcha) => {
-	if (!req.session.captcha ||
-		!captcha ||
-		captcha != req.session.captcha
-	) {
-		log.debug('invalid request for signup');
-		log.debug(`captcha:${captcha}`);
-		log.debug(`session.captcha:${req.session.captcha}`);
-		sendMsg(res, Status.UNAUTHORIZED,
-			'验证码错误', 'invalid captcha');
-		req.session.captcha = null;
-		return;
-	}
-
-	req.session.captcha = null;
+	if (!captchaHandler(req, res)) return;
 	if (!(nickname && password && emailAddr)) {
 		sendMsg(res, Status.FAILED,
 			'昵称、密码和邮件地址不能为空', 'param needed');

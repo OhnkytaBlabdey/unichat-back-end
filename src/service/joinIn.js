@@ -27,6 +27,9 @@ const UIG = require('../db/po/user_in_group_model');
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
 const JoinIn = (req, res, inviteCode) => {
+	if (!inviteCode) {
+		sendMsg(res, Status.FAILED, '没有输入邀请码');
+	}
 	Group.findOne({
 		attributes: ['gid'],
 		where: {
@@ -40,37 +43,41 @@ const JoinIn = (req, res, inviteCode) => {
 			return;
 		}
 	}).then((group) => {
-		log.info('found group with invite code');
-		// TODO 判断用户是否已经在群聊中
-		UIG.count({
-			where: {
-				group_id: group.gid,
-				user_id: req.session.user.uid
-			}
-		}).then((ct) => {
-			if (ct > 0) {
-				log.info('user already in group');
-				sendMsg(res, Status.FAILED,
-					'您已经是群成员', 'already in group');
-				return;
-			}
-			UIG.create({
-				group_id: group.gid,
-				role: 'normal',
-				user_id: req.session.user.uid
-			}).catch((err) => {
-				if (err) {
-					log.warn('join in group failed.', err);
-					sendMsg(res, Status.FAILED,
-						'加入群聊失败', 'failed');
+		if (group) {
+			log.info('found group with invite code');
+			// TODO 判断用户是否已经在群聊中
+			UIG.count({
+				where: {
+					group_id: group.gid,
+					user_id: req.session.user.uid
 				}
-			}).then((uig) => {
-				log.info('user joined group', uig);
-				sendMsg(res, Status.OK, '加入成功', null);
+			}).then((ct) => {
+				if (ct > 0) {
+					log.info('user already in group');
+					sendMsg(res, Status.FAILED,
+						'您已经是群成员', 'already in group');
+					return;
+				}
+				UIG.create({
+					group_id: group.gid,
+					role: 'normal',
+					user_id: req.session.user.uid
+				}).catch((err) => {
+					if (err) {
+						log.warn('join in group failed.', err);
+						sendMsg(res, Status.FAILED,
+							'加入群聊失败', 'failed');
+					}
+				}).then((uig) => {
+					log.info('user joined group', uig);
+					sendMsg(res, Status.OK, '加入成功', null);
+				});
+			}).catch((err) => {
+				errorHandler(res, err, 'count uig');
 			});
-		}).catch((err) => {
-			errorHandler(res, err, 'count uig');
-		});
+		} else {
+			sendMsg(res, Status.FAILED, '邀请码错误');
+		}
 	});
 };
 
@@ -84,7 +91,7 @@ const JoinInCB = (req, res) => {
 	log.debug('join in requested.');
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
-	const inviteCode = params.inviteCode;
+	const inviteCode = params.inviteCode || null;
 	JoinIn(req, res, inviteCode);
 };
 

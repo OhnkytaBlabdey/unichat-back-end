@@ -21,13 +21,14 @@ const UIG = require('../db/po/user_in_group_model');
 /**
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example /kick
  * @param {Request} req
  * @param {Response} res
  * @param {Number} gid 群聊ID
  * @param {Number} kickee 被踢出者的用户ID
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
-const handleKick = (req, res, gid, kickee) => {
+const Kick = (req, res, gid, kickee) => {
 	const kicker = req.session.user.uid || null;
 	if (!gid || !kickee || !kicker) {
 		res.send({
@@ -72,13 +73,13 @@ const handleKick = (req, res, gid, kickee) => {
  * @param {Request} req
  * @param {Response} res
  */
-const Kick = (req, res) => {
+const KickCB = (req, res) => {
 	log.debug('kick user requested.');
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
 	const kickee = params.uid || null;
-	handleKick(req, res, gid, kickee);
+	Kick(req, res, gid, kickee);
 };
 
-module.exports = Kick;
+module.exports = KickCB;

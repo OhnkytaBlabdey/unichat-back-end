@@ -18,13 +18,14 @@ const CIG = require('../db/po/channel_in_group_model');
  * 允许群成员查询该群的所有频道
  * @author Ohnkyta <ohnkyta@163.com>
  * @public
+ * @example not completed
  * @param {Request} req
  * @param {Response} res
  * @param {Number} gid
  * @returns {OK|FAILED|UNAUTHORIZED} status
  * @returns {Array} channels
  */
-const handleGetChannels = (req, res, gid) => {
+const GetChannels = (req, res, gid) => {
 	if (req.session.joinedIn && req.session.joinedIn.indexOf(gid) == -1) {
 		//TODO 使用sequelize的关系模型，重构
 		CIG.findAll({
@@ -44,7 +45,7 @@ const handleGetChannels = (req, res, gid) => {
 	}
 };
 
-const GetChannels = (req, res) => {
+const GetChannelsCB = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
@@ -52,6 +53,6 @@ const GetChannels = (req, res) => {
 	if (!gid) {
 		sendMsg(res, Status.FAILED, '缺少参数');
 	}
-	handleGetChannels(req, res, gid);
+	GetChannels(req, res, gid);
 };
-module.exports = GetChannels;
+module.exports = GetChannelsCB;

@@ -8,9 +8,11 @@ const Op = Sequelize.Op;
 const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
+const models = require('../db/po/models');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const User = require('../db/po/user_model');
+
+const User = models.user;
 
 //==================================================
 //                                                  

@@ -6,9 +6,11 @@ const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
 const getId = require('../util/uidGen');
 const log = require('../logger');
+const models = require('../db/po/models');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const User = require('../db/po/user_model');
+
+const User = models.user;
 
 const defaultAvatars = [
 	'https://i.loli.net/2019/11/27/ecbFyZJQXTlRo64.jpg',

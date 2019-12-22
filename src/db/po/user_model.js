@@ -1,8 +1,9 @@
 'use-strict';
 
+const sequelize = require('sequelize');
+
 const connection = require('../config');
 const log = require('../../logger');
-const sequelize = require('sequelize');
 
 const config = {
 	avatar: {
@@ -57,6 +58,7 @@ const config = {
 	uid: {
 		allowNull: false,
 		comment: '用户展示用的ID',
+		field: 'uid',
 		type: sequelize.INTEGER,
 		unique: true,
 		validate: {
@@ -65,10 +67,12 @@ const config = {
 	}
 };
 
-// const User = sequelize.define('user', {
-const User = connection.define('t_user', config, {
-	timestamp: true
+// const User = connection.define('t_user', config, {
+const User = connection.define('user', config, {
+	indexes: [{
+		fields: ['uid'],
+		unique: true
+	}]
 });
 log.info(config);
-log.info(User);
 module.exports = User;

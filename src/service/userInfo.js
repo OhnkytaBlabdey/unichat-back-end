@@ -33,6 +33,7 @@ const UserInfo = (req, res, uid) => {
 	User.findOne({
 		attributes: [
 			'avatar',
+			'email_addr',
 			'nickname',
 			'profile'
 		],

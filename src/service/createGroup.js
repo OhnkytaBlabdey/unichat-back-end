@@ -4,12 +4,13 @@ const stringRandom = require('string-random');
 
 const errorHandler = require('../util/handleInternalError');
 const getId = require('../util/uidGen');
-const Group = require('../db/po/group_model');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
+const models = require('../db/po/models');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UserInGroup = require('../db/po/user_in_group_model');
+
+const Group = models.group;
 //=========================================================================================================
 //                                                                                                         
 //   ####  #####    #####    ###    ######  #####             ####    #####     #####   ##   ##  #####   
@@ -60,12 +61,16 @@ const CreateGroup = (req, res, name, logo) => {
 			}
 		}).then((group) => {
 			// TODO: 记录用户与群聊的关系
-			UserInGroup.create({
-				group_id: group.gid,
-				role: 'owner',
-				user_id: req.session.user.uid
+			// req.session.user.addGroup(group, {
+			group.addUser(req.session.user, {
+				through: {
+					// groupGid: group.gid,
+					role: 'owner'
+					// userUid: req.session.user.uid
+				}
 			}).catch((err) => {
-				errorHandler(res, err, 'create group 3');
+				if (errorHandler(res, err, 'create group 3'))
+					return;
 			}).then((uig) => {
 				log.info(uig);
 				sendMsg(res, Status.OK,

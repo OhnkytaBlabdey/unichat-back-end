@@ -36,7 +36,9 @@ const GetUsersInGroup = (req, res, gid) => {
 		// attributes: [],
 		include: [{
 			model: models.user,
-			attributes: ['uid']
+			attributes: [
+				'uid', 'avatar', 'nickname', 'email_addr', 'profile'
+			]
 		}],
 		where: {
 			gid: gid
@@ -48,17 +50,19 @@ const GetUsersInGroup = (req, res, gid) => {
 		}
 		const user = models.user.build(req.session.user);
 		const users = group.users;
-		log.info(users, typeof (users));
-		// if (true) {
-		// 	sendMsg(res, Status.OK, group.users);
-		// 	return;
-		// }
+		log.debug(users, typeof (users));
 		for (const usr of users) {
 			// 找到
 			if (usr.uid === user.uid) {
 				sendMsg(res, Status.OK, null, null, {
 					users: users.map((userInSite) => {
-						return userInSite.uid;
+						return {
+							uid: userInSite.uid,
+							avatar: userInSite.avatar,
+							profile: userInSite.profile,
+							emailAddr: userInSite.email_addr,
+							nickname: userInSite.nickname
+						};
 					})
 				});
 				return;

@@ -33,7 +33,6 @@ const Status = require('../status');
 const GetUsersInGroup = (req, res, gid) => {
 	// TODO:如果用户不是该群成员，则拒绝查询
 	models.group.findOne({
-		// attributes: [],
 		include: [{
 			model: models.user,
 			attributes: [

@@ -1,12 +1,14 @@
 'use-strict';
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
 
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UIG = require('../db/po/user_in_group_model');
 
 //=====================================
 //                                     
@@ -29,27 +31,32 @@ const UIG = require('../db/po/user_in_group_model');
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
 const Kick = (req, res, gid, kickee) => {
-	const kicker = req.session.user.uid || null;
+	const kicker = req.session.user.uid;
 	if (!gid || !kickee || !kicker) {
+		log.info(req.session.user.uid);
+		log.info(kicker);
+		log.info(kickee);
+		log.info(gid);
 		res.send({
 			desc: 'parameters needed',
 			msg: 'failed',
 			status: Status.FAILED
 		});
+		return;
 	}
-	UIG.count({
+	models.userInGroup.count({
 		attributes: ['role'],
 		where: {
-			gid: gid,
+			siteGid: gid,
 			role: 'owner',
-			uid: kicker
+			userUid: kicker
 		}
 	}).then((ct) => {
-		if (ct || (kicker === kickee)) {
-			UIG.destroy({
+		if ((ct > 0) || (kicker == kickee)) {
+			models.userInGroup.destroy({
 				where: {
-					gid: gid,
-					uid: kickee
+					siteGid: gid,
+					userUid: kickee
 				}
 			}).then((ct) => {
 				if (ct) {
@@ -62,6 +69,9 @@ const Kick = (req, res, gid, kickee) => {
 			}).catch((err) => {
 				errorHandler(res, err, 'kick 1');
 			});
+		} else {
+			sendMsg(res, Status.FAILED,
+				'无法踢出', 'not deleted');
 		}
 	}).catch((err) => {
 		errorHandler(res, err, 'kick 2');
@@ -78,7 +88,7 @@ const KickCB = (req, res) => {
 	if (!loginHandler(req, res)) return;
 	const params = req.para;
 	const gid = params.gid || null;
-	const kickee = params.uid || null;
+	const kickee = params.kickee || null;
 	Kick(req, res, gid, kickee);
 };
 

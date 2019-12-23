@@ -1,13 +1,14 @@
 'use-strict';
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
 
 const errorHandler = require('../util/handleInternalError');
-const Group = require('../db/po/group_model');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UIG = require('../db/po/user_in_group_model');
 //=========================================================
 //                                                         
 //      ##   #####   ##  ##     ##  ##  ##     ##        
@@ -30,7 +31,7 @@ const JoinIn = (req, res, inviteCode) => {
 	if (!inviteCode) {
 		sendMsg(res, Status.FAILED, '没有输入邀请码');
 	}
-	Group.findOne({
+	models.group.findOne({
 		attributes: ['gid'],
 		where: {
 			invite_code: inviteCode
@@ -46,10 +47,10 @@ const JoinIn = (req, res, inviteCode) => {
 		if (group) {
 			log.info('found group with invite code');
 			// TODO 判断用户是否已经在群聊中
-			UIG.count({
+			models.userInGroup.count({
 				where: {
-					group_id: group.gid,
-					user_id: req.session.user.uid
+					siteGid: group.gid,
+					userUid: req.session.user.uid
 				}
 			}).then((ct) => {
 				if (ct > 0) {
@@ -58,20 +59,22 @@ const JoinIn = (req, res, inviteCode) => {
 						'您已经是群成员', 'already in group');
 					return;
 				}
-				UIG.create({
-					group_id: group.gid,
-					role: 'normal',
-					user_id: req.session.user.uid
-				}).catch((err) => {
-					if (err) {
-						log.warn('join in group failed.', err);
-						sendMsg(res, Status.FAILED,
-							'加入群聊失败', 'failed');
-					}
-				}).then((uig) => {
-					log.info('user joined group', uig);
-					sendMsg(res, Status.OK, '加入成功', null);
-				});
+				const user = models.user.build(req.session.user);
+				group.addUser(user, {
+						through: {
+							role: 'normal'
+						}
+					})
+					.catch((err) => {
+						if (err) {
+							log.warn('join in group failed.', err);
+							sendMsg(res, Status.FAILED,
+								'加入群聊失败', 'failed');
+						}
+					}).then((uig) => {
+						log.info('user joined group', uig);
+						sendMsg(res, Status.OK, '加入成功', null);
+					});
 			}).catch((err) => {
 				errorHandler(res, err, 'count uig');
 			});

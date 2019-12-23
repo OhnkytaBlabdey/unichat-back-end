@@ -3,13 +3,15 @@
 const moment = require('moment');
 const stringRandom = require('string-random');
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
+
 const errorHandler = require('../util/handleInternalError');
-const Group = require('../db/po/group_model');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UserInGroup = require('../db/po/user_in_group_model');
 //============================================================================================================
 //                                                                                                            
 //   ####    #####  ######  ##  ##     ##  ##   ##  ##  ######  #####   ####   #####   ####    #####        
@@ -31,20 +33,20 @@ const UserInGroup = require('../db/po/user_in_group_model');
  */
 const GetInviteCode = (req, res, gid) => {
 	const uid = req.session.user.uid;
-	UserInGroup.count({
+	models.userInGroup.count({
 		where: {
-			group_id: gid,
-			user_id: uid
+			siteGid: gid,
+			userUid: uid
 		}
 	}).catch((err) => {
 		errorHandler(res, err, 'get invite code 1');
 	}).then((ct) => {
-		if (!ct) {
+		if (!ct || ct != 1) {
 			sendMsg(res, Status.UNAUTHORIZED,
 				'未授权的请求');
 			return;
 		}
-		Group.findOne({
+		models.group.findOne({
 			attributes: ['updatedAt', 'invite_code'],
 			where: {
 				gid: gid
@@ -66,7 +68,7 @@ const GetInviteCode = (req, res, gid) => {
 			// log.debug('diff', dist);
 			if (dist > 7) {
 				const code = (gid % 100) + stringRandom(4);
-				Group.update({
+				models.group.update({
 					invite_code: code
 				}, {
 					fields: ['invite_code'],

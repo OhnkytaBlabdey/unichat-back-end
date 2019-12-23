@@ -19,12 +19,13 @@ Router
 	//                                    
 	//====================================
 	.post('/modify', services.modify)
+	.get('/modify', services.modify)
 	.post('/signup', services.signup)
 	.get('/signup', services.signup)
 	.post('/signin', services.signin)
 	.get('/signin', services.signin)
-	.get('/userInfo', services.userInfo)
 	.post('/userInfo', services.userInfo)
+	.get('/userInfo', services.userInfo)
 	//================================================
 	//                                                
 	//   ####    #####     #####   ##   ##  #####   

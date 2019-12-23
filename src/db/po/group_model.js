@@ -1,16 +1,16 @@
 'use-strict';
 
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 const connection = require('../config');
 const log = require('../../logger');
 
-const config = {
+const attr_site = {
 	gid: {
 		allowNull: false,
 		comment: '群聊展示用的ID',
 		field: 'gid',
-		type: sequelize.INTEGER,
+		type: Sequelize.INTEGER,
 		unique: true,
 		validate: {
 			notNull: true
@@ -19,7 +19,7 @@ const config = {
 	invite_code: {
 		allowNull: false,
 		comment: '入群码',
-		type: sequelize.STRING,
+		type: Sequelize.STRING,
 		validate: {
 			len: [6, 6],
 			notNull: true
@@ -28,7 +28,7 @@ const config = {
 	logo: {
 		allowNull: false,
 		comment: '群头像',
-		type: sequelize.STRING,
+		type: Sequelize.STRING,
 		validate: {
 			is: ['^https://i.loli.net/*'],
 			isUrl: true,
@@ -38,7 +38,7 @@ const config = {
 	name: {
 		allowNull: false,
 		comment: '群名：2-20',
-		type: sequelize.STRING,
+		type: Sequelize.STRING,
 		validate: {
 			len: [2, 20],
 			notNull: true
@@ -46,12 +46,15 @@ const config = {
 	}
 };
 
-// const Group = connection.define('t_group', config, {
-const Group = connection.define('group', config, {
-	indexes: [{
-		fields: ['gid'],
-		unique: true
-	}]
+
+class Site extends Sequelize.Model {}
+Site.init(attr_site, {
+	// indexes: [{
+	// 	fields: ['gid'],
+	// 	unique: true
+	// }],
+	sequelize: connection,
+	modelName: 'site'
 });
-log.info(config);
-module.exports = Group;
+log.info(attr_site);
+module.exports = Site;

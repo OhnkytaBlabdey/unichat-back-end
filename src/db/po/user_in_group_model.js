@@ -1,20 +1,14 @@
 'use-strict';
 
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 const connection = require('../config');
 
-const UserInGroup = connection.define('userGroup', {
-	id: {
-		allowNull: false,
-		autoIncrement: true,
-		primaryKey: true,
-		type: sequelize.INTEGER
-	},
+const attr_uis = {
 	role: {
 		allowNull: false,
 		comment: '用户在群里的角色',
-		type: sequelize.DataTypes.ENUM,
+		type: Sequelize.DataTypes.ENUM,
 		validate: {
 			notNull: true
 		},
@@ -25,6 +19,13 @@ const UserInGroup = connection.define('userGroup', {
 			'banned'
 		]
 	}
+};
+class UserSites extends Sequelize.Model {}
+UserSites.init(attr_uis, {
+	sequelize: connection,
+	modelName: 'userSites'
 });
-
-module.exports = UserInGroup;
+module.exports = UserSites;
+// module.exports = (sequelize, DataType) => {
+// 	return UserGroups;
+// };

@@ -78,7 +78,7 @@ const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha)
 					'登录失败', 'login failed');
 				return;
 			}
-			log.info(user, 'signed in');
+			log.debug(user, 'signed in');
 			req.session.user = user;
 			req.session.isvalid = true;
 			sendMsg(res, Status.OK, '登陆成功');

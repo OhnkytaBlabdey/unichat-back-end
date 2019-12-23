@@ -68,7 +68,7 @@ const CreateGroup = (req, res, name, logo) => {
 				errorHandler(res, new Error('没有'), 'create group 4');
 				return;
 			}
-			log.info(user);
+			log.debug(user);
 			group.addUser(user, {
 				through: {
 					role: 'owner'

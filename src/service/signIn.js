@@ -2,17 +2,15 @@
 
 const crypto = require('crypto');
 const Sequelize = require('sequelize');
-
+const connection = require('../db/config');
+const model = require('../db/po/models');
 const Op = Sequelize.Op;
 
 const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
-const models = require('../db/po/models');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-
-const User = models.user;
 
 //==================================================
 //                                                  
@@ -53,7 +51,7 @@ const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha)
 		return;
 	}
 	// 查询
-	User.findOne({
+	model.user.findOne({
 		where: {
 			[Op.or]: [{
 					nickname: nickname
@@ -80,6 +78,7 @@ const handleSignIn = (req, res, nickname, emailAddr, uid, passwordHash, captcha)
 					'登录失败', 'login failed');
 				return;
 			}
+			log.info(user, 'signed in');
 			req.session.user = user;
 			req.session.isvalid = true;
 			sendMsg(res, Status.OK, '登陆成功');

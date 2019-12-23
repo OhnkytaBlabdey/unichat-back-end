@@ -2,15 +2,17 @@
 
 const stringRandom = require('string-random');
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const model = require('../db/po/models');
+
 const errorHandler = require('../util/handleInternalError');
 const getId = require('../util/uidGen');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
-const models = require('../db/po/models');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
 
-const Group = models.group;
 //=========================================================================================================
 //                                                                                                         
 //   ####  #####    #####    ###    ######  #####             ####    #####     #####   ##   ##  #####   
@@ -34,14 +36,14 @@ const Group = models.group;
  * @returns {OK|FAILED|UNAUTHORIZED} status
  */
 const CreateGroup = (req, res, name, logo) => {
-	Group.max('id').catch((err) => {
+	model.group.max('id').catch((err) => {
 		if (err) {
 			errorHandler(res, err, 'create group 1');
 		}
 	}).then((maxid) => {
 		if (!maxid) maxid = 0;
 		const gid = getId(maxid);
-		Group.create({
+		model.group.create({
 			gid: gid,
 			invite_code: stringRandom(6),
 			logo: logo,
@@ -61,24 +63,29 @@ const CreateGroup = (req, res, name, logo) => {
 			}
 		}).then((group) => {
 			// TODO: 记录用户与群聊的关系
-			// req.session.user.addGroup(group, {
-			group.addUser(req.session.user, {
+			const user = model.user.build(req.session.user);
+			if (!group.addUser || !user.uid) {
+				errorHandler(res, new Error('没有'), 'create group 4');
+				return;
+			}
+			log.info(user);
+			group.addUser(user, {
 				through: {
-					// groupGid: group.gid,
 					role: 'owner'
-					// userUid: req.session.user.uid
 				}
 			}).catch((err) => {
 				if (errorHandler(res, err, 'create group 3'))
 					return;
-			}).then((uig) => {
-				log.info(uig);
-				sendMsg(res, Status.OK,
-					'创建群聊成功', null, {
-						gid: group.gid,
-						logo: group.logo,
-						name: group.name
-					});
+			}).then((rs) => {
+				if (rs) {
+					log.info(rs);
+					sendMsg(res, Status.OK,
+						'创建群聊成功', null, {
+							gid: group.gid,
+							logo: group.logo,
+							name: group.name
+						});
+				}
 			});
 		});
 	});

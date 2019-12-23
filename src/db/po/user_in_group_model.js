@@ -26,6 +26,3 @@ UserSites.init(attr_uis, {
 	modelName: 'userSites'
 });
 module.exports = UserSites;
-// module.exports = (sequelize, DataType) => {
-// 	return UserGroups;
-// };

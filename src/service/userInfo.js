@@ -1,11 +1,13 @@
 'use-strict';
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
 
 const loginHandler = require('../util/handleLogin');
 const errorHandler = require('../util/handleInternalError');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const User = require('../db/po/user_model');
 //=========================================================================
 //                                                                         
 //  ##   ##   ####  #####  #####    ##  ##     ##  #####   #####         
@@ -30,9 +32,10 @@ const User = require('../db/po/user_model');
  * @returns {String} profile 用户签名档
  */
 const UserInfo = (req, res, uid) => {
-	User.findOne({
+	models.user.findOne({
 		attributes: [
 			'avatar',
+			'email_addr',
 			'nickname',
 			'profile'
 		],

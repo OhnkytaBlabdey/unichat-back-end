@@ -1,10 +1,13 @@
 'use-strict';
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
+
 const errorHandler = require('../util/handleInternalError');
 const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UIG = require('../db/po/user_in_group_model');
 //================================================================================================================
 //                                                                                                                
 //  ##   ##   ####  #####  #####    ##   ####  ##  ##     ##   ####    #####     #####   ##   ##  #####         
@@ -17,7 +20,7 @@ const UIG = require('../db/po/user_in_group_model');
 /**
  *
  * @author Ohnkyta <ohnkyta@163.com>
- * @public
+ * @private
  * @example /isInGroup
  * @param {Request} req
  * @param {Response} res
@@ -27,10 +30,10 @@ const UIG = require('../db/po/user_in_group_model');
  */
 const UserIsInGroup = (req, res, gid) => {
 	const uid = req.session.user.uid;
-	UIG.count({
+	models.userInGroup.count({
 		where: {
-			group_id: gid,
-			user_id: uid
+			siteGid: gid,
+			userUid: uid
 		}
 	}).then((ct) => {
 		if (ct > 0) {

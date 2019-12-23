@@ -20,7 +20,6 @@
 		"semi": "warn",
 		"quotes": ["warn", "single"],
 		"sort-imports": "warn",
-		"sort-keys": "warn",
 		"no-multi-spaces": "warn",
 		"comma-dangle": "warn",
 		"no-whitespace-before-property": "warn",

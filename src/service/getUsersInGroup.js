@@ -1,12 +1,14 @@
 'use-strict';
 
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const models = require('../db/po/models');
 
 const errorHandler = require('../util/handleInternalError');
 const log = require('../logger');
 const loginHandler = require('../util/handleLogin');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const UIG = require('../db/po/user_in_group_model');
 
 //=========================================================================
 //                                                                         
@@ -30,18 +32,44 @@ const UIG = require('../db/po/user_in_group_model');
  */
 const GetUsersInGroup = (req, res, gid) => {
 	// TODO:如果用户不是该群成员，则拒绝查询
-	UIG.findAll({
-		attributes: ['user_id'],
+	models.group.findOne({
+		include: [{
+			model: models.user,
+			attributes: [
+				'uid', 'avatar', 'nickname', 'email_addr', 'profile'
+			]
+		}],
 		where: {
-			group_id: gid
+			gid: gid
 		}
-	}).then((uigs) => {
-		log.debug('found users in group');
-		sendMsg(res, Status.OK, null, null, {
-			users: uigs.map((uig) => {
-				return uig.user_id;
-			})
-		});
+	}).then((group) => {
+		if (!group) {
+			sendMsg(res, Status.UNAUTHORIZED, '不存在');
+			return;
+		}
+		const user = models.user.build(req.session.user);
+		const users = group.users;
+		log.debug(users, typeof (users));
+		for (const usr of users) {
+			// 找到
+			if (usr.uid === user.uid) {
+				sendMsg(res, Status.OK, null, null, {
+					users: users.map((userInSite) => {
+						return {
+							uid: userInSite.uid,
+							avatar: userInSite.avatar,
+							profile: userInSite.profile,
+							emailAddr: userInSite.email_addr,
+							nickname: userInSite.nickname
+						};
+					})
+				});
+				return;
+			}
+		}
+		// 没有找到
+		sendMsg(res, Status.UNAUTHORIZED, '您不在该群');
+		return;
 	}).catch((err) => {
 		errorHandler(res, err, 'get users');
 	});

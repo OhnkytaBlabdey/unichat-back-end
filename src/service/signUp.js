@@ -1,6 +1,9 @@
 'use-strict';
 
 const crypto = require('crypto');
+const connection = require('../db/config');
+const Sequelize = require('sequelize');
+const model = require('../db/po/models');
 
 const captchaHandler = require('../util/handleCaptcha');
 const errorHandler = require('../util/handleInternalError');
@@ -8,7 +11,7 @@ const getId = require('../util/uidGen');
 const log = require('../logger');
 const sendMsg = require('../util/sendMsg');
 const Status = require('../status');
-const User = require('../db/po/user_model');
+
 
 const defaultAvatars = [
 	'https://i.loli.net/2019/11/27/ecbFyZJQXTlRo64.jpg',
@@ -60,7 +63,7 @@ const SignUp = (req, res, nickname, password, emailAddr, profile, avatar) => {
 		return;
 	}
 
-	User.count({
+	model.user.count({
 		where: {
 			nickname: nickname
 		}
@@ -73,7 +76,7 @@ const SignUp = (req, res, nickname, password, emailAddr, profile, avatar) => {
 				`昵称[${nickname}]已被占用`,
 				`nickname [${nickname}] has been taken.`);
 		} else {
-			User.max('id').catch((err) => {
+			model.user.max('id').catch((err) => {
 				errorHandler(res, err, 'signup 2');
 			}).then((maxid) => {
 				if (!maxid) maxid = 0;
@@ -81,7 +84,7 @@ const SignUp = (req, res, nickname, password, emailAddr, profile, avatar) => {
 				const hash = crypto.createHash('sha256');
 				hash.update(password);
 				const passwordHash = hash.digest('hex');
-				User.create({
+				model.user.create({
 					avatar: avatar,
 					email_addr: emailAddr,
 					nickname: nickname,
@@ -108,7 +111,11 @@ const SignUp = (req, res, nickname, password, emailAddr, profile, avatar) => {
 							uid: user.uid
 						});
 					} else {
-						sendMsg();
+						sendMsg(res, Status.OK, '注册失败', null, {
+							avatar: avatar,
+							nickname: user.nickname,
+							uid: user.uid
+						});
 					}
 				});
 			});

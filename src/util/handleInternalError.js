@@ -16,6 +16,8 @@ const Handler = (res, err, app = 'unknown') => {
 		// res.status(500);
 		sendMsg(res, Status.FAILED,
 			'内部错误', 'internal error');
+		return true;
 	}
+	return false;
 };
 module.exports = Handler;
